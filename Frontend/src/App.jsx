@@ -21,7 +21,7 @@ function App() {
       <div>
         <Routes>
           <Route path='/' element={<Start />} />
-          <Route path='/home' element={<UserProtectedWrapper><Home /></UserProtectedWrapper>} />
+          <Route path='/home' element={<Home />} />
           <Route path='/login' element={<UserLogin />} />
           <Route path='/signup' element={<UserSignUp />} />
           <Route path='/user-logout' element={<UserProtectedWrapper><UserLogout /></UserProtectedWrapper>} />
