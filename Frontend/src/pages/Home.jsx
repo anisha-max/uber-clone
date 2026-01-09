@@ -3,12 +3,27 @@ import { useGSAP } from "@gsap/react"
 import gsap from 'gsap'
 import { ArrowDown, ChevronDown, ChevronUp, User2 } from 'lucide-react'
 import LocationSearchPanel from '../components/LocationSearchPanel'
+import VehiclePanel from '../components/VehiclePanel'
+import ConfirmedRide from '../components/ConfirmedRide'
+import LookingForDriver from '../components/LookingForDriver'
+import WaitingForDriver from '../components/WaitingForDriver'
 
 function Home() {
   const [pickup, setPickup] = useState('')
   const [destination, setDestination] = useState('')
   const [panelOpen, setPanelOpen] = useState(false)
   const panelRef = useRef(null)
+  const vehicleFoundRef = useRef(null)
+  const vehicalPanelRef = useRef(null)
+    const waitingForDriverRef = useRef(null)
+  const ConfirmedRidePanelRef = useRef(null)
+  const [vehicalPanel, setvehicalPanel] = useState(false)
+  const [ConfirmedRidePanel ,setConfirmedRidePanel] =useState(false)
+  const [vehicleFoundPanel ,setVehicleFoundPanel] =useState(false)
+  const [waitingForDriverPanel ,setWaitingForDriverPanel] =useState(false)
+
+
+
   useGSAP(() => {
     if (panelOpen) {
       gsap.to(panelRef.current, {
@@ -23,6 +38,56 @@ function Home() {
   const submitHandler = (e) => {
     e.preventDefault()
   }
+
+  useGSAP(() => {
+    if (vehicalPanel) {
+      gsap.to(vehicalPanelRef.current, {
+        transform: "translateY(0)"
+      })
+    } else {
+      gsap.to(vehicalPanelRef.current, {
+        transform: "translateY(100%)"
+      })
+    }
+  }, [vehicalPanel])
+
+
+    useGSAP(() => {
+    if (vehicleFoundPanel) {
+      gsap.to(vehicleFoundRef.current, {
+         transform: "translateY(0)"
+      })
+    } else {
+      gsap.to(vehicleFoundRef.current, {
+             transform: "translateY(100%)"
+      })
+    }
+  }, [vehicleFoundPanel])
+  
+    useGSAP(() => {
+    if (ConfirmedRidePanel) {
+      gsap.to(ConfirmedRidePanelRef.current, {
+        transform: "translateY(0)"
+      })
+    } else {
+      gsap.to(ConfirmedRidePanelRef.current, {
+        transform: "translateY(100%)"
+      })
+    }
+  }, [ConfirmedRidePanel])
+
+    useGSAP(() => {
+    if (waitingForDriverPanel) {
+      gsap.to(waitingForDriverRef.current, {
+        transform: "translateY(0)"
+      })
+    } else {
+      gsap.to(waitingForDriverRef.current, {
+        transform: "translateY(100%)"
+      })
+    }
+  }, [waitingForDriverPanel])
+
   return (
     <div className='h-screen relative overflow-hidden'>
       <div className='absolute top-5 left-5'>
@@ -64,56 +129,20 @@ function Home() {
           </form>
         </div>
         <div className='px-6 bg-white ' ref={panelRef}>
-          <LocationSearchPanel />
+          <LocationSearchPanel setPanelOpen={setPanelOpen} vehicalPanel={vehicalPanel} setvehicalPanel={setvehicalPanel} />
         </div>
       </div>
-      <div className='fixed z-10 bottom-0 bg-white px-3 py-8 w-full'>
-        <h2 className='text-2xl font-semibold px-3 mb-1'>Choose a vehicle</h2>
-        <div className='flex p-3 items-center justify-between gap-2 active:border-3 rounded-xl mb-2'>
-          <img className='w-22 ' src='/car.webp' />
-          <div className='ml-2 w-1/2'>
-            <h4 className='flex items-center gap-1 font-medium text-base'>
-              Uber Go <span className='flex items-center gap-1 text-xs font-normal'><User2 size={12} fill='black' />4</span>
-            </h4>
-            <h5 className='text-sm text-gray-800'>
-              2 min away
-            </h5>
-            <p className='text-xs text-gray-600'>
-              Affordable , compact ride
-            </p>
-          </div>
-          <h4 className='font-semibold text-lg'>₹193.20</h4>
-        </div>
-           <div className='flex p-3 items-center justify-between gap-2 active:border-3 rounded-xl mb-2'>
-          <img className='w-22 ' src='/bike.webp' />
-          <div className='ml-2 w-1/2'>
-            <h4 className='flex items-center gap-1 font-medium text-base'>
-              Moto <span className='flex items-center gap-1 text-xs font-normal'><User2 size={12} fill='black' />1</span>
-            </h4>
-            <h5 className='text-sm text-gray-800'>
-              2 min away
-            </h5>
-            <p className='text-xs text-gray-600'>
-              Affordable , motercycle ride
-            </p>
-          </div>
-          <h4 className='font-semibold text-lg'>₹65.20</h4>
-        </div>
-           <div className='flex p-3 items-center justify-between gap-2 active:border-3 rounded-xl mb-2'>
-          <img className='w-22 ' src='/auto.webp' />
-          <div className='ml-2 w-1/2'>
-            <h4 className='flex items-center gap-1 font-medium text-base'>
-              Moto <span className='flex items-center gap-1 text-xs font-normal'><User2 size={12} fill='black' />3</span>
-            </h4>
-            <h5 className='text-sm text-gray-800'>
-              3 min away
-            </h5>
-            <p className='text-xs text-gray-600'>
-              Affordable , auto ride
-            </p>
-          </div>
-          <h4 className='font-semibold text-lg'>118.20</h4>
-        </div>
+      <div ref={vehicalPanelRef} className='fixed z-10 bottom-0 translate-y-full bg-white px-3 pb-8 w-full'>
+        <VehiclePanel setConfirmedRidePanel={setConfirmedRidePanel} setvehicalPanel={setvehicalPanel} />
+      </div>
+      <div ref={ConfirmedRidePanelRef} className='fixed z-10 bottom-0 translate-y-full bg-white px-3 pb-8 w-full'>
+        <ConfirmedRide setConfirmedRidePanel={setConfirmedRidePanel} setVehicleFoundPanel={setVehicleFoundPanel}/>
+      </div>
+       <div ref={vehicleFoundRef} className='fixed z-10 bottom-0 translate-y-full bg-white px-3 pb-8 w-full'>
+        <LookingForDriver setVehicleFoundPanel={setVehicleFoundPanel}/>
+      </div>
+        <div ref={waitingForDriverRef} className='fixed z-10 bottom-0  bg-white px-3 pb-8 w-full'>
+        <WaitingForDriver setWaitingForDriverPanel={setWaitingForDriverPanel}/>
       </div>
     </div>
   )
