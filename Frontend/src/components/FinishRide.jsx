@@ -1,20 +1,14 @@
 import { Banknote, ChevronDown, MapPinCheckIcon, MapPinIcon } from 'lucide-react'
-import React, { useState } from 'react'
-import { Link } from "react-router-dom"
+import React from 'react'
+import {Link} from "react-router-dom"
 
-const ConfirmRidePopUp = ({ setRidePopUpPanel, setConfirmRidePopUpPanel }) => {
-   const [otp , setOtp] =useState("")
-   
-    const submitHandler = (e)=>{
-e.preventDefault()
-    }
-
-    return (
-        <div className=' h-screen'>
-            <button onClick={() => { setConfirmRidePopUpPanel(prev => !prev) }} className=' flex justify-center w-full py-3 mb-1 '>
+const FinishRide = ({setfinishRidePanel}) => {
+  return (
+    <div className=' h-[80vh]'>
+            <button onClick={() => { setfinishRidePanel(false) }} className=' flex justify-center w-full py-3 mb-1 '>
                 <ChevronDown className='text-gray-400 w-40' />
             </button>
-            <h3 className='text-2xl font-semibold mb-4'>Confirm this ride to Start!</h3>
+            <h3 className='text-2xl font-semibold mb-4'>Finish this ride !</h3>
             <div className='flex flex-col justify-between items-center gap-2'>
                 <div className='flex justify-between items-center w-full px-3 py-4 bg-gray-100 rounded-lg'>
                     <div className='flex justify-between items-center gap-4 '>
@@ -57,27 +51,15 @@ e.preventDefault()
                     </div>
                 </div>
                 <div className='mt-3 w-full'>
-                    <form onSubmit={(e) => {
-                        submitHandler(e)
-                    }}>
-                        <input type='text' value={otp} onChange={(e)=>{
-                            setOtp(e.target.value)
-                        }} className='bg-[#eee] px-10 py-2 mb-3 text-base font-mono rounded-lg w-full mt-3' placeholder='Enter otp' />
-                        <Link to="/captain-riding" className='w-full bg-green-500 flex justify-center  font-semibold text-white rounded-lg py-2 px-4'>
-                            Confirm
-                        </Link>
-                        <button onClick={() => {
-                            setConfirmRidePopUpPanel(prev => !prev)
-                            setRidePopUpPanel(prev => !prev)
-                        }} className=' w-full  mt-2 bg-red-500 font-semibold text-white rounded-lg py-2 px-4 '>
-                            Cancle
-                        </button>
-                    </form>
+                        <Link to="/captain-home" className='w-full bg-green-500 flex justify-center  font-semibold text-white rounded-lg py-2 px-4'>
+                            Finish Ride
+                        </Link> 
+                        <p className='text-xs text-red-600 mt-6'>Click finish ride button if payment is completed.</p>
                 </div>
 
             </div>
         </div>
-    )
+  )
 }
 
-export default ConfirmRidePopUp
+export default FinishRide

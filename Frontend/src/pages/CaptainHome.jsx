@@ -8,7 +8,7 @@ import gsap from 'gsap'
 import ConfirmRidePopUp from '../components/ConfirmRidePopUp'
 
 function CaptainHome() {
-  const [ridePopUpPanel, setRidePopUpPanel] = useState(true)
+  const [ridePopUpPanel, setRidePopUpPanel] = useState(false)
   const ridePopUpPanelRef = useRef(null)
   const [confirmRidePopUpPanel, setConfirmRidePopUpPanel] = useState(false)
   const confirmRidePopUpPanelRef = useRef(null)
@@ -49,7 +49,7 @@ function CaptainHome() {
         <CaptainDetails />
       </div>
       <div ref={ridePopUpPanelRef} className='fixed z-10 bottom-0 translate-y-full bg-white px-3 pb-8 w-full'>
-        <RidePopUp setRidePopUpPanel={setRidePopUpPanel} setConfirmRidePopUpPanel={setConfirmRidePopUpPanel}/>
+        <RidePopUp setRidePopUpPanel={setRidePopUpPanel} setConfirmRidePopUpPanel={setConfirmRidePopUpPanel} />
       </div>
       <div ref={confirmRidePopUpPanelRef} className='fixed z-10 bottom-0 translate-y-full bg-white px-3 pb-8 w-full'>
         <ConfirmRidePopUp setConfirmRidePopUpPanel={setConfirmRidePopUpPanel} setRidePopUpPanel={setRidePopUpPanel} />
