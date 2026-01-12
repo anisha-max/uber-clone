@@ -1,29 +1,43 @@
 import { MapPinIcon } from 'lucide-react'
 import React from 'react'
 
-function LocationSearchPanel({setPanelOpen, setvehicalPanel}) {
-  const locations = [
-    " Abc 23 , near ksm plaza,my uber booking station ,Jaupur",
-    " Abc 23 , near ksm plaza,my uber booking station ,Jaupur",
-    " Abc 23 , near ksm plaza,my uber booking station ,Jaupur"]
+function LocationSearchPanel({
+  suggestions,
+  setPanelOpen,
+  setvehicalPanel,
+  setPickup,
+  setDestination,
+  activeField
+}) {
+  const handleSuggestionClick = (suggestion) => {
+    const address = suggestion.description
+
+    if (activeField === 'pickup') {
+      setPickup(address)
+    } else if (activeField === 'destination') {
+      setDestination(address)
+    }
+
+    setvehicalPanel(true)
+    setPanelOpen(false)
+  }
+
   return (
     <div>
-      {locations.map((location , index) => {
-        return (
-          <div onClick={()=>{
-            setvehicalPanel(true)
-            setPanelOpen(false)
-          }} key={index}
-          className='flex items-center rounded-xl gap-2 my-2 border-2 border-gray-50 active:border-black p-2'>
-            <div className='bg-[#eee] rounded-full p-1'>
-              <MapPinIcon size={18} className='' />
-            </div>
-            <p className='text-md'>
-              {location}
-            </p>
+      {suggestions.map((elem, index) => (
+        <div
+          key={index}
+          onClick={() => handleSuggestionClick(elem)}
+          className='flex items-center rounded-xl gap-2 my-2 border-2 border-gray-50 active:border-black p-2'
+        >
+          <div className='bg-[#eee] rounded-full p-1'>
+            <MapPinIcon size={18} />
           </div>
-        )
-      })}
+          <p className='text-md text-'>
+            {elem.description}
+          </p>
+        </div>
+      ))}
     </div>
   )
 }

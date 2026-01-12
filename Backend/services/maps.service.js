@@ -50,7 +50,7 @@ module.exports.getAutoCompleteSuggestions = async(input)=>{
         throw new Error('query is required')
     }
         const apiKey = process.env.GOOGLE_MAPS_API
-    const url = `https://maps.googleapis.com/maps/api/geocode/json?address=${encodeURIComponent(input)}&key=${apiKey}`
+const url = `https://maps.googleapis.com/maps/api/place/autocomplete/json?input=${encodeURIComponent(input)}&components=country:in&key=${apiKey}`
     try {
         const response = await axios.get(url);
         if (response.data.status === 'OK') {
