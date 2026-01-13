@@ -2,34 +2,37 @@ import { ChevronDown } from 'lucide-react'
 import React from 'react'
 import VehicleCard from './VehicleCard';
 
-function VehiclePanel({ setvehicalPanel ,setConfirmedRidePanel }) {
+function VehiclePanel({ fare , selectVehicle ,setvehicalPanel ,setConfirmedRidePanel }) {
     const rides = [
         {
             id: 1,
+            name:"car",
             img: "/car.webp",
             title: "Uber Go",
             seats: 4,
             time: "2 min away",
             desc: "Affordable , compact ride",
-            price: "₹193.20",
+            price: fare?.car,
         },
         {
             id: 2,
+             name:"bike",
             img: "/bike.webp",
             title: "Moto",
             seats: 1,
             time: "2 min away",
             desc: "Affordable , motercycle ride",
-            price: "₹65.20",
+            price: fare?.bike,
         },
         {
             id: 3,
+             name:"auto",
             img: "/auto.webp",
             title: "Auto",
             seats: 3,
             time: "3 min away",
             desc: "Affordable , auto ride",
-            price: "₹118.20",
+            price: fare?.auto,
         },
     ];
 
@@ -40,7 +43,7 @@ function VehiclePanel({ setvehicalPanel ,setConfirmedRidePanel }) {
             </button>
             <h3 className='text-2xl font-semibold px-3 mb-1'>Choose a vehicle</h3>
             {rides.map((ride) => (
-                <VehicleCard setConfirmedRidePanel={setConfirmedRidePanel} key={ride.id} {...ride} />
+                <VehicleCard selectVehicle={selectVehicle} setConfirmedRidePanel={setConfirmedRidePanel} key={ride.id} {...ride} />
             ))}
 
         </>

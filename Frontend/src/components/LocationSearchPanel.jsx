@@ -18,8 +18,8 @@ function LocationSearchPanel({
       setDestination(address)
     }
 
-    setvehicalPanel(true)
-    setPanelOpen(false)
+    // setvehicalPanel(true)
+    // setPanelOpen(false)
   }
 
   return (

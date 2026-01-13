@@ -6,6 +6,7 @@ async function getFare(pickup, destination) {
     if (!pickup || !destination) {
         throw new Error('Pickup and destination are required')
     }
+    const round2 = (n) => Number(n.toFixed(2));
     const distanceTime = await mapService.getDistanceTime(pickup, destination)
     const baseFare = {
         auto: 30,
@@ -25,10 +26,24 @@ async function getFare(pickup, destination) {
     }
 
     const fare = {
-        auto: baseFare.auto + ((distanceTime.distance.value/1000) * perKmRate.auto) + ((distanceTime.duration.value/60 )* perMinuteRate.auto),
-        car: baseFare.car + ((distanceTime.distance.value/1000) * perKmRate.car) + ((distanceTime.duration.value/60 )* perMinuteRate.car),
-        bike: baseFare.bike + ((distanceTime.distance.value/1000) * perKmRate.bike) + ((distanceTime.duration.value/60 )* perMinuteRate.bike)
-    }
+        auto: round2(
+  baseFare.auto +
+  (distanceTime.distance.value / 1000) * perKmRate.auto +
+  (distanceTime.duration.value / 60) * perMinuteRate.auto
+),
+
+car: round2(
+  baseFare.car +
+  (distanceTime.distance.value / 1000) * perKmRate.car +
+  (distanceTime.duration.value / 60) * perMinuteRate.car
+),
+
+bike: round2(
+  baseFare.bike +
+  (distanceTime.distance.value / 1000) * perKmRate.bike +
+  (distanceTime.duration.value / 60) * perMinuteRate.bike
+),
+}
     return fare
 }
 
@@ -56,6 +71,8 @@ module.exports.createRide = async ({ user, pickup, destination, vehicleType }) =
     })
     return ride
 }
+
+module.exports.getFare = getFare
 
 
 

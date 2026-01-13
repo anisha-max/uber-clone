@@ -22,40 +22,46 @@ function Home() {
   const [ConfirmedRidePanel, setConfirmedRidePanel] = useState(false)
   const [vehicleFoundPanel, setVehicleFoundPanel] = useState(false)
   const [waitingForDriverPanel, setWaitingForDriverPanel] = useState(false)
-const [pickupSuggestions ,setPickupSuggestions] = useState([])
-const [destinationSuggestions ,setDestinationSuggestions] = useState([])
-const [activeField , setActiveField] = useState(null)
+  const [pickupSuggestions, setPickupSuggestions] = useState([])
+  const [destinationSuggestions, setDestinationSuggestions] = useState([])
+  const [activeField, setActiveField] = useState(null)
+  const [fare, setFare] = useState({})
+  const [vehicleType, setVehicleType] = useState(null)
 
   const handlePickupChange = async (e) => {
     setPickup(e.target.value)
-    setPanelOpen(true) 
+    setPanelOpen(true)
     setActiveField('pickup')
     try {
       const response = await axios.get(`${import.meta.env.VITE_BASE_URL}/maps/get-suggestions`,
-         { params: { input: e.target.value },
-        headers :{
-          Authorization:`Bearer ${localStorage.getItem('token')}`
-        }})
-        setPickupSuggestions(response.data)
-    }catch{
+        {
+          params: { input: e.target.value },
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem('token')}`
+          }
+        })
+      setPickupSuggestions(response.data)
+    } catch {
 
     }
-}
+  }
   const handleDestinationChange = async (e) => {
     setDestination(e.target.value)
     setPanelOpen(true)
-setActiveField('destination')
+    setActiveField('destination')
     try {
       const response = await axios.get(`${import.meta.env.VITE_BASE_URL}/maps/get-suggestions`,
-         { params: { input: e.target.value },
-        headers :{
-          Authorization:`Bearer ${localStorage.getItem('token')}`
-        }})
-        setDestinationSuggestions(response.data)
-    }catch{
+        {
+          params: { input: e.target.value },
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem('token')}`
+          }
+        })
+      setDestinationSuggestions(response.data)
+    } catch {
 
     }
-}
+  }
 
   useGSAP(() => {
     if (panelOpen) {
@@ -121,6 +127,35 @@ setActiveField('destination')
     }
   }, [waitingForDriverPanel])
 
+  async function findTrip() {
+    setvehicalPanel(true)
+    setPanelOpen(false)
+    const response = await axios.get(`${import.meta.env.VITE_BASE_URL}/rides/get-fare`,
+      {
+        params: { pickup, destination },
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem('token')}`
+        }
+      }
+    )
+    setFare(response.data)
+
+  }
+
+async  function createRide(){
+    const response = await axios.post(`${import.meta.env.VITE_BASE_URL}/rides/create` ,{
+      pickup,
+      destination,
+      vehicleType
+    },{
+      headers:{
+        Authorization:`Bearer ${localStorage.getItem('token')}`
+      }
+    })
+    console.log(response.data)
+  }
+
+
   return (
     <div className='h-screen relative overflow-hidden'>
       <div className='absolute top-5 left-5'>
@@ -130,7 +165,7 @@ setActiveField('destination')
         <img className='h-full w-full object-cover' src='/uber.webp' />
       </div>
       <div className='h-screen flex flex-col justify-end absolute top-0 w-full '>
-        <div className='h-[30%] bg-white p-6 relative'>
+        <div className='h-[35%] bg-white p-6 relative'>
           <button onClick={() => { setPanelOpen(prev => !prev) }} className='absolute top-3 right-3'>
             {panelOpen ? <ChevronDown /> : <ChevronUp />}
           </button>
@@ -140,48 +175,54 @@ setActiveField('destination')
           <form onSubmit={(e) => {
             submitHandler(e)
           }}>
-            <div className="line absolute h-16 w-1 top-[45%] left-10 bg-gray-600 rounded-full" />
+            <div className="line absolute h-16 w-1 top-[35%] left-10 bg-gray-600 rounded-full" />
             <input
               onClick={() => {
                 setPanelOpen(true)
                 setActiveField('pickup')
               }}
               value={pickup}
-              onChange={ handlePickupChange }
+              onChange={handlePickupChange}
               className='bg-[#eee] px-10 py-2 text-base rounded-lg w-full mt-3'
               type='text'
               placeholder='Add a pick-up location' />
             <input
               onClick={() => {
                 setPanelOpen(true)
-                  setActiveField('destination')
+                setActiveField('destination')
               }}
               value={destination}
-              onChange={ handleDestinationChange }
+              onChange={handleDestinationChange}
               className='bg-[#eee] px-10 py-2 text-base rounded-lg w-full mt-3'
               type='text'
               placeholder='Enter your destination' />
           </form>
+          <button className=' w-full bg-black mt-5 font-semibold text-white rounded-lg py-2 px-4'
+            onClick={() => {
+              findTrip()
+            }}>
+            Find ride
+          </button>
         </div>
         <div className='px-6 bg-white ' ref={panelRef}>
           <LocationSearchPanel
-          suggestions = {activeField ==='pickup' ? pickupSuggestions : destinationSuggestions} 
-          setPanelOpen={setPanelOpen} 
-          setvehicalPanel={setvehicalPanel} 
-          setPickup={setPickup}
-          setDestination ={setDestination}
-          activeField = {activeField}
+            suggestions={activeField === 'pickup' ? pickupSuggestions : destinationSuggestions}
+            setPanelOpen={setPanelOpen}
+            setvehicalPanel={setvehicalPanel}
+            setPickup={setPickup}
+            setDestination={setDestination}
+            activeField={activeField}
           />
         </div>
       </div>
       <div ref={vehicalPanelRef} className='fixed z-10 bottom-0 translate-y-full bg-white px-3 pb-8 w-full'>
-        <VehiclePanel setConfirmedRidePanel={setConfirmedRidePanel} setvehicalPanel={setvehicalPanel} />
+        <VehiclePanel selectVehicle={setVehicleType} fare={fare} setConfirmedRidePanel={setConfirmedRidePanel} setvehicalPanel={setvehicalPanel} />
       </div>
       <div ref={ConfirmedRidePanelRef} className='fixed z-10 bottom-0 translate-y-full bg-white px-3 pb-8 w-full'>
-        <ConfirmedRide setConfirmedRidePanel={setConfirmedRidePanel} setVehicleFoundPanel={setVehicleFoundPanel} />
+        <ConfirmedRide pickup={pickup} destination={destination} createRide={createRide} fare={fare} vehicleType={vehicleType} setConfirmedRidePanel={setConfirmedRidePanel} setVehicleFoundPanel={setVehicleFoundPanel} />
       </div>
       <div ref={vehicleFoundRef} className='fixed z-10 bottom-0 translate-y-full bg-white px-3 pb-8 w-full'>
-        <LookingForDriver setVehicleFoundPanel={setVehicleFoundPanel} />
+        <LookingForDriver fare={fare} pickup={pickup} destination={destination} vehicleType={vehicleType} setVehicleFoundPanel={setVehicleFoundPanel} />
       </div>
       <div ref={waitingForDriverRef} className='fixed z-10 bottom-0  bg-white px-3 pb-8 w-full'>
         <WaitingForDriver setWaitingForDriverPanel={setWaitingForDriverPanel} />
