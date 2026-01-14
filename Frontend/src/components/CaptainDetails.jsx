@@ -1,13 +1,18 @@
 import { Banknote, CircleGauge, Clock } from 'lucide-react'
-import React from 'react'
+import React, { useContext } from 'react'
+import { CaptainDataContext } from '../context/CaptainContext'
+
+
 
 function CaptainDetails() {
+  const {captain} = useContext(CaptainDataContext)
+  console.log(captain)
   return (
     <>
          <div className='flex items-center justify-between p-1'>
           <div className='flex items-center justify-start gap-3'>
             <img src='/uber.webp' className='w-10 h-10 rounded-full object-cover' />
-            <h4 className='text-lg font-medium'>Harsh patel</h4>
+            <h4 className='text-lg font-medium capitalize'>{captain.fullname.firstname + " " + captain.fullname.lastname}</h4>
           </div>
           <div>
             <h4 className='text-xl font-semibold'>

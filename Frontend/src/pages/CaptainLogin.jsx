@@ -6,7 +6,7 @@ import axios from 'axios'
 function CaptainLogin() {
  const [email, setEmail] = useState("")
   const [password, setPassword] = useState("")
-  const [captainData , setcaptainData] = useState({})
+  // const [captainData , setcaptainData] = useState({})
   const navigate = useNavigate()
   const {captain , setCaptain} = React.useContext(CaptainDataContext)
   const handleSubmit = async (e)=>{
