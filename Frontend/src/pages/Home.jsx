@@ -50,7 +50,7 @@ function Home() {
 
   socket.on('ride-started' ,ride =>{
     setWaitingForDriverPanel(false)
-    navigate('/riding')
+    navigate('/riding' ,{state:{ride:ride}})
   })
 
   const handlePickupChange = async (e) => {

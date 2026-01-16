@@ -18,9 +18,10 @@ const navigate = useNavigate()
             }
         })
         if(response.status===200){
+            console.log(ride)
             setConfirmRidePopUpPanel(false)
             setRidePopUpPanel(false)
-            navigate('/captain-riding')
+            navigate('/captain-riding' , {state:{ride:ride}})
         }
     }
 

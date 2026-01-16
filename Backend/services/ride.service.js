@@ -65,7 +65,7 @@ module.exports.createRide = async ({ user, pickup, destination, vehicleType }) =
 
     const fare = await getFare(pickup, destination)
 
-    const ride = rideModel.create({
+    const ride = await rideModel.create({
         user,
         pickup,
         destination,
@@ -87,7 +87,7 @@ module.exports.confirmRide = async ({
     }, {
         status: 'accepted',
         captain: captain._id
-    })
+    }, { new: true })
 
     const ride = await rideModel.findOne({
         _id: rideId
@@ -125,11 +125,37 @@ module.exports.startRide = async ({ rideId, otp, captain }) => {
         _id: rideId
     }, {
         status: 'ongoing'
-    })
+    }, { new: true })
 
     return ride;
 }
 
+
+module.exports.endRide = async ({ rideId, captain }) => {
+    if (!rideId) {
+        throw new Error('Ride id is required');
+    }
+
+    const ride = await rideModel.findOne({
+        _id: rideId,
+        captain: captain._id
+    }).populate('user').populate('captain').select('+otp');
+    if (!ride) {
+        throw new Error('Ride not found');
+    }
+
+    if (ride.status !== 'ongoing') {
+        throw new Error('Ride not found');
+    }
+
+    await rideModel.findOneAndUpdate({
+        _id: rideId
+    }, {
+        status: 'completed'
+    }, { new: true })
+
+    return ride;
+}
 
 
 

@@ -1,7 +1,18 @@
 import { Banknote, Home, MapPinCheckIcon } from 'lucide-react'
-import React from 'react'
-import { Link } from 'react-router-dom'
+import React, { useContext } from 'react'
+import { Link, useLocation, useNavigate } from 'react-router-dom'
+import {SocketContext} from '../context/SocketContext'
+
+
 function Riding() {
+  const location = useLocation()
+  const ride =location.state?.ride  || {}
+  const {socket} = useContext(SocketContext)
+  const navigate = useNavigate()
+
+  socket.on("ride-ended" ,()=>{
+    navigate('/home')
+  })
   return (
     <div className='h-screen'>
       <Link to="/home" className='fixed top-2 left-2 h-10 w-10 bg-white flex items-center justify-center rounded-full'>
@@ -15,9 +26,9 @@ function Riding() {
           <img src="/car.webp" className='h-16' />
           <div className='text-right'>
             <h2 className='text-lg font-medium'>
-              Lorem
+              {ride?.captain.fullname.firstname}
             </h2>
-            <h4 className='text-xl font-semibold -my-1'>AP07 DB 2679</h4>
+            <h4 className='text-xl font-semibold -my-1'>{ride?.captain.vehicle.plate}</h4>
             <p className='font-sm text-sm'>Maruti Alto</p>
           </div>
         </div>
@@ -26,16 +37,16 @@ function Riding() {
             <div className='flex items-center gap-5 p-3 border-b-2 border-gray-200'>
               <MapPinCheckIcon size={18} className='' />
               <div >
-                <h3 className='text-lg font-medium'>Lorem ipsim</h3>
+                <h3 className='text-lg font-medium'>Destination</h3>
                 <p className='text-gray-600 text-sm -mt-1'>
-                  lorem ipsum some text
+                 {ride?.destination}
                 </p>
               </div>
             </div>
             <div className='flex items-center gap-5 p-3'>
               <Banknote size={18} className='' />
               <div >
-                <h3 className='text-lg font-medium'>₹193.20</h3>
+                <h3 className='text-lg font-medium'>₹{ride?.fare}</h3>
                 <p className='text-gray-600 text-sm -mt-1'>
                   Cash
                 </p>

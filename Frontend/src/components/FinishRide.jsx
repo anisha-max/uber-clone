@@ -1,10 +1,25 @@
 import { Banknote, ChevronDown, MapPinCheckIcon, MapPinIcon } from 'lucide-react'
 import React from 'react'
-import {Link} from "react-router-dom"
+import { Link, useNavigate } from "react-router-dom"
+import axios from 'axios'
 
-const FinishRide = ({setfinishRidePanel}) => {
-  return (
-    <div className=' h-[80vh]'>
+const FinishRide = ({ ride, setfinishRidePanel }) => {
+    const navigate = useNavigate()
+    async function endRide() {
+        const response = await axios.post(`${import.meta.env.VITE_BASE_URL}/rides/end-ride`, {
+            rideId: ride._id
+        }, {
+            headers: {
+                Authorization: `Bearer ${localStorage.getItem('token')}`
+            }
+        })
+        if (response.status === 200) {
+            setfinishRidePanel(false)
+            navigate('/captain-home')
+        }
+    }
+    return (
+        <div className=' h-[80vh]'>
             <button onClick={() => { setfinishRidePanel(false) }} className=' flex justify-center w-full py-3 mb-1 '>
                 <ChevronDown className='text-gray-400 w-40' />
             </button>
@@ -14,7 +29,7 @@ const FinishRide = ({setfinishRidePanel}) => {
                     <div className='flex justify-between items-center gap-4 '>
                         <img src='/uber.webp' className='w-10 h-10 rounded-full' />
                         <h3 className='text-base font-medium'>
-                            Emilly bhatt
+                            {ride?.user.fullname.firstname}
                         </h3>
                     </div>
                     <div>
@@ -25,25 +40,25 @@ const FinishRide = ({setfinishRidePanel}) => {
                     <div className='flex items-center gap-5 p-3 border-b-2 border-gray-200'>
                         <MapPinIcon size={18} className='' />
                         <div >
-                            <h3 className='text-lg font-medium'>Lorem ipsim</h3>
+                            <h3 className='text-lg font-medium'>Pickup</h3>
                             <p className='text-gray-600 text-sm -mt-1'>
-                                lorem ipsum some text
+                                {ride?.pickup}
                             </p>
                         </div>
                     </div>
                     <div className='flex items-center gap-5 p-3 border-b-2 border-gray-200'>
                         <MapPinCheckIcon size={18} className='' />
                         <div >
-                            <h3 className='text-lg font-medium'>Lorem ipsim</h3>
+                            <h3 className='text-lg font-medium'>Destination</h3>
                             <p className='text-gray-600 text-sm -mt-1'>
-                                lorem ipsum some text
+                                {ride?.destination}
                             </p>
                         </div>
                     </div>
                     <div className='flex items-center gap-5 p-3'>
                         <Banknote size={22} className='' />
                         <div >
-                            <h3 className='text-lg font-medium'>₹193.20</h3>
+                            <h3 className='text-lg font-medium'>₹{ride?.fare}</h3>
                             <p className='text-gray-600 text-sm -mt-1'>
                                 Cash
                             </p>
@@ -51,15 +66,15 @@ const FinishRide = ({setfinishRidePanel}) => {
                     </div>
                 </div>
                 <div className='mt-3 w-full'>
-                        <Link to="/captain-home" className='w-full bg-green-500 flex justify-center  font-semibold text-white rounded-lg py-2 px-4'>
-                            Finish Ride
-                        </Link> 
-                        <p className='text-xs text-red-600 mt-6'>Click finish ride button if payment is completed.</p>
+                    <button onClick={endRide} className='w-full bg-green-500 flex justify-center  font-semibold text-white rounded-lg py-2 px-4'>
+                        Finish Ride
+                    </button>
+                    <p className='text-xs text-red-600 mt-6'>Click finish ride button if payment is completed.</p>
                 </div>
 
             </div>
         </div>
-  )
+    )
 }
 
 export default FinishRide
