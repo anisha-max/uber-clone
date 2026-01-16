@@ -8,9 +8,9 @@ function UserProtectedWrapper({ children }) {
  const [isLoading, setIsLoading] = useState(true)
 
   const { setUser } = useContext(UserDataContext)
-
+ const token = localStorage.getItem("token")
   useEffect(() => {
-    const token = localStorage.getItem("token")
+   
 
     if (!token) {
       navigate("/login")
@@ -29,7 +29,7 @@ function UserProtectedWrapper({ children }) {
         )
 
         if (response.status === 200) {
-          setUser(response.data.user)
+          setUser(response.data)
           setIsLoading(false)
         }
       } catch (err) {

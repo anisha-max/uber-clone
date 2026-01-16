@@ -5,14 +5,14 @@ import axios from 'axios'
 
 function CaptainProtectedWrapper({ children }) {
   const navigate = useNavigate()
-  const [isLoading, setIsLoading] = useState(true)
-
   const { captain, setCaptain } = useContext(CaptainDataContext)
+  const [isLoading, setIsLoading] = useState(true)
 
   useEffect(() => {
     const token = localStorage.getItem("token")
 
     if (!token) {
+      setIsLoading(false)
       navigate("/captain-login")
       return
     }
@@ -23,30 +23,36 @@ function CaptainProtectedWrapper({ children }) {
           `${import.meta.env.VITE_BASE_URL}/captains/profile`,
           {
             headers: {
-              Authorization: `Bearer ${token}`
-            }
+              Authorization: `Bearer ${token}`,
+            },
           }
         )
 
-        if (response.status === 200) {
-          setCaptain(response.data.captain)
-          setIsLoading(false)
-        }
+        console.log("PROFILE RESPONSE:", response.data)
+
+        // 🔑 SAFE assignment (THIS LINE MATTERS MOST)
+        setCaptain(response.data.captain || response.data)
+
       } catch (err) {
-        console.log(err)
+        console.log("PROFILE ERROR:", err)
         localStorage.removeItem("token")
         navigate("/captain-login")
+      } finally {
+        // 🔒 ALWAYS stop loading
+        setIsLoading(false)
       }
     }
 
     fetchProfile()
-  }, [navigate, setCaptain])
+  }, [])
 
-  if (isLoading) {
+  // 🔐 HARD BLOCK
+  if (isLoading || !captain) {
     return <>Loading...</>
   }
 
-  return <>{children}</>
+  return children
 }
+
 
 export default CaptainProtectedWrapper

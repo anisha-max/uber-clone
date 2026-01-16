@@ -8,6 +8,11 @@ import ConfirmedRide from '../components/ConfirmedRide'
 import LookingForDriver from '../components/LookingForDriver'
 import WaitingForDriver from '../components/WaitingForDriver'
 import axios from 'axios'
+import { useContext } from 'react'
+import { useEffect } from 'react'
+import { UserDataContext } from '../context/UserContext'
+import { SocketContext } from '../context/SocketContext'
+import { useNavigate } from 'react-router-dom'
 
 function Home() {
   const [pickup, setPickup] = useState('')
@@ -27,6 +32,26 @@ function Home() {
   const [activeField, setActiveField] = useState(null)
   const [fare, setFare] = useState({})
   const [vehicleType, setVehicleType] = useState(null)
+  const [ride, setRide] = useState(null)
+  const navigate = useNavigate()
+
+  const { socket } = useContext(SocketContext)
+  const { user } = useContext(UserDataContext)
+  useEffect(() => {
+    console.log(user)
+   socket.emit("join", { userType: "user", userId: user._id })
+  },[user])
+
+  socket.on('ride-confirmed' , ride=>{
+    setWaitingForDriverPanel(true)
+    setVehicleFoundPanel(false)
+    setRide(ride)
+  })
+
+  socket.on('ride-started' ,ride =>{
+    setWaitingForDriverPanel(false)
+    navigate('/riding')
+  })
 
   const handlePickupChange = async (e) => {
     setPickup(e.target.value)
@@ -142,14 +167,14 @@ function Home() {
 
   }
 
-async  function createRide(){
-    const response = await axios.post(`${import.meta.env.VITE_BASE_URL}/rides/create` ,{
+  async function createRide() {
+    const response = await axios.post(`${import.meta.env.VITE_BASE_URL}/rides/create`, {
       pickup,
       destination,
       vehicleType
-    },{
-      headers:{
-        Authorization:`Bearer ${localStorage.getItem('token')}`
+    }, {
+      headers: {
+        Authorization: `Bearer ${localStorage.getItem('token')}`
       }
     })
     console.log(response.data)
@@ -225,7 +250,7 @@ async  function createRide(){
         <LookingForDriver fare={fare} pickup={pickup} destination={destination} vehicleType={vehicleType} setVehicleFoundPanel={setVehicleFoundPanel} />
       </div>
       <div ref={waitingForDriverRef} className='fixed z-10 bottom-0  bg-white px-3 pb-8 w-full'>
-        <WaitingForDriver setWaitingForDriverPanel={setWaitingForDriverPanel} />
+        <WaitingForDriver ride={ride} setWaitingForDriverPanel={setWaitingForDriverPanel} />
       </div>
     </div>
   )

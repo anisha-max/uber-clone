@@ -1,12 +1,27 @@
 import { Banknote, ChevronDown, MapPinCheckIcon, MapPinIcon } from 'lucide-react'
 import React, { useState } from 'react'
-import { Link } from "react-router-dom"
+import axios from 'axios'
+import { useNavigate } from 'react-router-dom'
 
-const ConfirmRidePopUp = ({ setRidePopUpPanel, setConfirmRidePopUpPanel }) => {
-   const [otp , setOtp] =useState("")
-   
-    const submitHandler = (e)=>{
-e.preventDefault()
+const ConfirmRidePopUp = ({ ride, setRidePopUpPanel, setConfirmRidePopUpPanel }) => {
+    const [otp, setOtp] = useState("")
+const navigate = useNavigate()
+    const submitHandler = async (e) => {
+        e.preventDefault()
+          const response = await axios.get(`${import.meta.env.VITE_BASE_URL}/rides/start-ride`, {
+            params: {
+                rideId: ride._id,
+                otp: otp
+            },
+            headers: {
+                Authorization: `Bearer ${localStorage.getItem('token')}`
+            }
+        })
+        if(response.status===200){
+            setConfirmRidePopUpPanel(false)
+            setRidePopUpPanel(false)
+            navigate('/captain-riding')
+        }
     }
 
     return (
@@ -20,7 +35,7 @@ e.preventDefault()
                     <div className='flex justify-between items-center gap-4 '>
                         <img src='/uber.webp' className='w-10 h-10 rounded-full' />
                         <h3 className='text-base font-medium'>
-                            Emilly bhatt
+                            {ride?.user.fullname.firstname + " " + ride?.user.fullname.lastname}
                         </h3>
                     </div>
                     <div>
@@ -33,7 +48,7 @@ e.preventDefault()
                         <div >
                             <h3 className='text-lg font-medium'>Lorem ipsim</h3>
                             <p className='text-gray-600 text-sm -mt-1'>
-                                lorem ipsum some text
+                                {ride?.pickup}
                             </p>
                         </div>
                     </div>
@@ -42,14 +57,14 @@ e.preventDefault()
                         <div >
                             <h3 className='text-lg font-medium'>Lorem ipsim</h3>
                             <p className='text-gray-600 text-sm -mt-1'>
-                                lorem ipsum some text
+                                {ride?.destination}
                             </p>
                         </div>
                     </div>
                     <div className='flex items-center gap-5 p-3'>
                         <Banknote size={22} className='' />
                         <div >
-                            <h3 className='text-lg font-medium'>₹193.20</h3>
+                            <h3 className='text-lg font-medium'>₹{ride?.fare}</h3>
                             <p className='text-gray-600 text-sm -mt-1'>
                                 Cash
                             </p>
@@ -57,15 +72,13 @@ e.preventDefault()
                     </div>
                 </div>
                 <div className='mt-3 w-full'>
-                    <form onSubmit={(e) => {
-                        submitHandler(e)
-                    }}>
-                        <input type='text' value={otp} onChange={(e)=>{
+                    <form onSubmit={submitHandler}>
+                        <input type='text' value={otp} onChange={(e) => {
                             setOtp(e.target.value)
                         }} className='bg-[#eee] px-10 py-2 mb-3 text-base font-mono rounded-lg w-full mt-3' placeholder='Enter otp' />
-                        <Link to="/captain-riding" className='w-full bg-green-500 flex justify-center  font-semibold text-white rounded-lg py-2 px-4'>
+                        <button className='w-full bg-green-500 flex justify-center  font-semibold text-white rounded-lg py-2 px-4'>
                             Confirm
-                        </Link>
+                        </button>
                         <button onClick={() => {
                             setConfirmRidePopUpPanel(prev => !prev)
                             setRidePopUpPanel(prev => !prev)
