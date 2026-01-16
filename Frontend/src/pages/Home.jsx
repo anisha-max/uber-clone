@@ -13,6 +13,7 @@ import { useEffect } from 'react'
 import { UserDataContext } from '../context/UserContext'
 import { SocketContext } from '../context/SocketContext'
 import { useNavigate } from 'react-router-dom'
+import LiveTracking from '../components/LiveTracking'
 
 function Home() {
   const [pickup, setPickup] = useState('')
@@ -187,7 +188,7 @@ function Home() {
         <h1 className='text-4xl font-semibold mb-5'>Uber</h1>
       </div>
       <div className='h-screen w-screen'>
-        <img className='h-full w-full object-cover' src='/uber.webp' />
+     <LiveTracking/>
       </div>
       <div className='h-screen flex flex-col justify-end absolute top-0 w-full '>
         <div className='h-[35%] bg-white p-6 relative'>

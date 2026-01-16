@@ -4,6 +4,7 @@ import { Link, useLocation } from 'react-router-dom'
 import { useGSAP } from "@gsap/react"
 import gsap from 'gsap'
 import FinishRide from '../components/FinishRide'
+import LiveTracking from '../components/LiveTracking'
 
 const CaptainRiding = () => {
     const finishRidePanelRef = useRef(null)
@@ -31,7 +32,7 @@ const CaptainRiding = () => {
                 </Link>
             </div>
             <div className='h-4/5'>
-                <img className='h-full w-full object-cover' src='/uber.webp' />
+              <LiveTracking/>
             </div>
             <div className="h-1/5   bg-yellow-400" onClick={() => {
                 setfinishRidePanel(true)

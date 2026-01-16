@@ -2,6 +2,7 @@ import { Banknote, Home, MapPinCheckIcon } from 'lucide-react'
 import React, { useContext } from 'react'
 import { Link, useLocation, useNavigate } from 'react-router-dom'
 import {SocketContext} from '../context/SocketContext'
+import LiveTracking from '../components/LiveTracking'
 
 
 function Riding() {
@@ -19,7 +20,7 @@ function Riding() {
         <Home />
       </Link>
       <div className='h-1/2'>
-        <img className='h-full w-full object-cover' src='/uber.webp' />
+      <LiveTracking/>
       </div>
       <div className="h-1/2 p-4">
         <div className='flex items-center justify-between'>
