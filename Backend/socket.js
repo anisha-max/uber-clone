@@ -21,7 +21,20 @@ function intializeSocket(server) {
                 await userModel.findByIdAndUpdate(userId, {
                     socketId: socket.id
                 })
-            } else if (userType === 'captain') {
+                 socket.on('update-location-user', async (data) => {
+                    const { userId, location } = data
+                    if (!location || !location.ltd || !location.lng) {
+                        return socket.emit("error", { message: ' Invalid location data' })
+                    }
+                    await userModel.findByIdAndUpdate(userId, {
+                        location: {
+                            ltd: location.ltd,
+                            lng: location.lng
+                        }
+                    })
+                })
+            }
+             else if (userType === 'captain') {
                 await captainModel.findByIdAndUpdate(userId, {
                     socketId: socket.id
                 })

@@ -58,3 +58,45 @@ module.exports.logoutUser = async (req, res, next) => {
     await blacklistTokenModel.create({ token })
     res.status(200).json({ message: 'Logged out' })
 }
+
+const MAX_HISTORY = 5  
+
+module.exports.saveUserSuggestion = async (req, res) => {
+  try {
+    const userId = req.user._id          // from auth middleware
+    const suggestion = req.body.suggestion
+
+    if (!suggestion || !suggestion.place_id) {
+      return res.status(400).json({ error: 'Invalid suggestion' })
+    }
+
+    const user = await userModel.findById(userId)
+    if (!user) return res.status(404).json({ error: 'User not found' })
+
+    // check if suggestion already exists
+    const existing = user.searchHistory.find(
+      item => item.placeId === suggestion.place_id
+    )
+
+    if (existing) {
+      existing.count += 1
+      existing.lastUsed = new Date()
+    } else {
+      user.searchHistory.push({
+        description: suggestion.description,
+        placeId: suggestion.place_id
+      })
+    }
+
+    // Keep only top MAX_HISTORY by count (most used)
+    user.searchHistory.sort((a, b) => b.count - a.count)
+    user.searchHistory = user.searchHistory.slice(0, MAX_HISTORY)
+
+    await user.save()
+
+    res.json({ success: true, searchHistory: user.searchHistory })
+  } catch (err) {
+    console.error(err)
+    res.status(500).json({ error: 'Server error' })
+  }
+}

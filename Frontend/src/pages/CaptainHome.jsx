@@ -9,6 +9,7 @@ import ConfirmRidePopUp from '../components/ConfirmRidePopUp'
 import { SocketContext } from '../context/SocketContext'
 import { CaptainDataContext } from '../context/CaptainContext'
 import axios from 'axios'
+import LiveTracking from '../components/LiveTracking'
 
 
 function CaptainHome() {
@@ -105,7 +106,8 @@ function CaptainHome() {
         </Link>
       </div>
       <div className='h-3/5'>
-        <img className='h-full w-full object-cover' src='/uber.webp' />
+        {/* <img className='h-full w-full object-cover' src='/uber.webp' /> */}
+        <LiveTracking/>
       </div>
       <div className="h-2/5 p-6">
         <CaptainDetails />

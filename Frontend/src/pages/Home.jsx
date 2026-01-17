@@ -34,43 +34,87 @@ function Home() {
   const [fare, setFare] = useState({})
   const [vehicleType, setVehicleType] = useState(null)
   const [ride, setRide] = useState(null)
+  const [latitude, setLatitude] = useState(null)
+const [longitude, setLongitude] = useState(null)
+
   const navigate = useNavigate()
 
   const { socket } = useContext(SocketContext)
   const { user } = useContext(UserDataContext)
-  useEffect(() => {
-    console.log(user)
-   socket.emit("join", { userType: "user", userId: user._id })
-  },[user])
+useEffect(() => {
+  if (!user) return
 
-  socket.on('ride-confirmed' , ride=>{
+  socket.emit("join", { userType: "user", userId: user._id })
+
+  const updateLocation = () => {
+    if (!navigator.geolocation) return
+
+    navigator.geolocation.getCurrentPosition(position => {
+      const lat = position.coords.latitude
+      const lng = position.coords.longitude
+
+      // ✅ SAVE IN STATE
+      setLatitude(lat)
+      setLongitude(lng)
+
+      socket.emit('update-location-user', {
+        userId: user._id,
+        location: {
+          ltd: lat,
+          lng: lng,
+        },
+      })
+    })
+  }
+
+  updateLocation()
+  const interval = setInterval(updateLocation, 10000)
+
+  return () => clearInterval(interval)
+}, [user, socket])
+
+
+
+  socket.on('ride-confirmed', ride => {
     setWaitingForDriverPanel(true)
     setVehicleFoundPanel(false)
     setRide(ride)
   })
 
-  socket.on('ride-started' ,ride =>{
+  socket.on('ride-started', ride => {
     setWaitingForDriverPanel(false)
-    navigate('/riding' ,{state:{ride:ride}})
+    navigate('/riding', { state: { ride: ride } })
   })
 
-  const handlePickupChange = async (e) => {
-    setPickup(e.target.value)
-    setPanelOpen(true)
-    setActiveField('pickup')
-    try {
-      const response = await axios.get(`${import.meta.env.VITE_BASE_URL}/maps/get-suggestions`,
-        {
-          params: { input: e.target.value },
-          headers: {
-            Authorization: `Bearer ${localStorage.getItem('token')}`
-          }
-        })
-      setPickupSuggestions(response.data)
-    } catch {
+const handlePickupChange = async (e) => {
+  const value = e.target.value
+  setPickup(value)
+  setPanelOpen(true)
+  setActiveField('pickup')
+  if (!value.trim() || !latitude || !longitude) return
 
-    }
+  try {
+    const response = await axios.get(
+      `${import.meta.env.VITE_BASE_URL}/maps/get-suggestions`,
+      {
+        params: {
+          input: value,
+          ltd: latitude,
+          lng: longitude,
+        },
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem('token')}`,
+        },
+      }
+    )
+console.log(response.data)
+    setPickupSuggestions(response.data.predictions)
+  } catch (error) {
+    console.error(error)
+    
   }
+}
+
   const handleDestinationChange = async (e) => {
     setDestination(e.target.value)
     setPanelOpen(true)
@@ -188,7 +232,7 @@ function Home() {
         <h1 className='text-4xl font-semibold mb-5'>Uber</h1>
       </div>
       <div className='h-screen w-screen'>
-     <LiveTracking/>
+        <LiveTracking />
       </div>
       <div className='h-screen flex flex-col justify-end absolute top-0 w-full '>
         <div className='h-[35%] bg-white p-6 relative'>

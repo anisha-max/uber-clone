@@ -22,6 +22,8 @@ userController.loginUser
 
 router.get('/profile', authMiddleware.authUser, userController.getUserProfile)
 
+router.post('/save-history', authMiddleware.authUser, userController.saveUserSuggestion)
+
 
 router.get('/logout' , authMiddleware.authUser , userController.logoutUser)
 
