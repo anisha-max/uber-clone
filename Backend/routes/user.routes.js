@@ -1,30 +1,30 @@
 const express = require('express');
 const router = express.Router();
-const {body} = require('express-validator');
+const { body } = require('express-validator');
 const userController = require('../controllers/user.controller');
 const authMiddleware = require('../middlewares/auth.middleware')
 
 
-router.post('/register' , [
+router.post('/register', [
     body('email').isEmail().withMessage('Invalid Email'),
-    body('fullname.firstname').isLength({min:3}).withMessage('First name must be 3 charachters'),
-     body('password').isLength({min:6}).withMessage('Password must be 6 charachters')
+    body('fullname.firstname').isLength({ min: 3 }).withMessage('First name must be 3 charachters'),
+    body('password').isLength({ min: 6 }).withMessage('Password must be 6 charachters')
 ],
-userController.resgisterUser
+    userController.resgisterUser
 )
 
-router.post('/login' , [
+router.post('/login', [
     body('email').isEmail().withMessage('Invalid Email'),
-    body('password').isLength({min:6}).withMessage('Password must be 6 charachters')
+    body('password').isLength({ min: 6 }).withMessage('Password must be 6 charachters')
 ],
-userController.loginUser
+    userController.loginUser
 )
 
 router.get('/profile', authMiddleware.authUser, userController.getUserProfile)
 
-router.post('/save-history', authMiddleware.authUser, userController.saveUserSuggestion)
+router.post('/save-suggestion', authMiddleware.authUser, userController.saveUserSuggestion);
 
 
-router.get('/logout' , authMiddleware.authUser , userController.logoutUser)
+router.get('/logout', authMiddleware.authUser, userController.logoutUser)
 
 module.exports = router

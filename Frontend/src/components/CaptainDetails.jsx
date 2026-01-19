@@ -6,8 +6,6 @@ import { CaptainDataContext } from '../context/CaptainContext'
 
 function CaptainDetails() {
   const { captain } = useContext(CaptainDataContext)
-
-  // ⛔ BLOCK RENDER UNTIL DATA EXISTS
   if (
     !captain ||
     !captain.fullname ||

@@ -59,7 +59,7 @@ module.exports.getAutoCompleteSuggestions = async (input, ltd, lng) => {
 &location=${ltd},${lng}
 &radius=${radius}
 &components=country:in
-&strictbounds=true&
+&strictbounds=true
 &key=${apiKey}`
 
     const response = await axios.get(url)

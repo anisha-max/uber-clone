@@ -35,45 +35,58 @@ function Home() {
   const [vehicleType, setVehicleType] = useState(null)
   const [ride, setRide] = useState(null)
   const [latitude, setLatitude] = useState(null)
-const [longitude, setLongitude] = useState(null)
+  const [longitude, setLongitude] = useState(null)
+  const [searchHistory, setSearchHistory] = useState([])
 
   const navigate = useNavigate()
 
   const { socket } = useContext(SocketContext)
   const { user } = useContext(UserDataContext)
-useEffect(() => {
-  if (!user) return
+  useEffect(() => {
+    if (!user) return
 
-  socket.emit("join", { userType: "user", userId: user._id })
+    socket.emit("join", { userType: "user", userId: user._id })
 
-  const updateLocation = () => {
-    if (!navigator.geolocation) return
+    const updateLocation = () => {
+      if (!navigator.geolocation) return
 
-    navigator.geolocation.getCurrentPosition(position => {
-      const lat = position.coords.latitude
-      const lng = position.coords.longitude
+      navigator.geolocation.getCurrentPosition(position => {
+        const lat = position.coords.latitude
+        const lng = position.coords.longitude
+        setLatitude(lat)
+        setLongitude(lng)
 
-      // ✅ SAVE IN STATE
-      setLatitude(lat)
-      setLongitude(lng)
-
-      socket.emit('update-location-user', {
-        userId: user._id,
-        location: {
-          ltd: lat,
-          lng: lng,
-        },
+        socket.emit('update-location-user', {
+          userId: user._id,
+          location: {
+            ltd: lat,
+            lng: lng,
+          },
+        })
       })
-    })
-  }
+    }
 
-  updateLocation()
-  const interval = setInterval(updateLocation, 10000)
+    updateLocation()
+    const interval = setInterval(updateLocation, 10000)
 
-  return () => clearInterval(interval)
-}, [user, socket])
+    return () => clearInterval(interval)
+  }, [user, socket])
 
-
+  useEffect(() => {
+    const fetchHistory = async () => {
+      try {
+        const response = await axios.get(`${import.meta.env.VITE_BASE_URL}/users/profile`, {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem('token')}`
+          }
+        })
+        setSearchHistory(response.data.searchHistory || [])
+      } catch (err) {
+        console.error("Error fetching history", err)
+      }
+    }
+    fetchHistory()
+  }, [])
 
   socket.on('ride-confirmed', ride => {
     setWaitingForDriverPanel(true)
@@ -86,52 +99,49 @@ useEffect(() => {
     navigate('/riding', { state: { ride: ride } })
   })
 
-const handlePickupChange = async (e) => {
-  const value = e.target.value
-  setPickup(value)
-  setPanelOpen(true)
-  setActiveField('pickup')
-  if (!value.trim() || !latitude || !longitude) return
-
-  try {
-    const response = await axios.get(
-      `${import.meta.env.VITE_BASE_URL}/maps/get-suggestions`,
-      {
-        params: {
-          input: value,
-          ltd: latitude,
-          lng: longitude,
-        },
-        headers: {
-          Authorization: `Bearer ${localStorage.getItem('token')}`,
-        },
-      }
-    )
-console.log(response.data)
-    setPickupSuggestions(response.data.predictions)
-  } catch (error) {
-    console.error(error)
-    
-  }
-}
-
-  const handleDestinationChange = async (e) => {
-    setDestination(e.target.value)
+  const handlePickupChange = async (e) => {
+    const value = e.target.value
+    setPickup(value)
     setPanelOpen(true)
-    setActiveField('destination')
-    try {
-      const response = await axios.get(`${import.meta.env.VITE_BASE_URL}/maps/get-suggestions`,
-        {
-          params: { input: e.target.value },
-          headers: {
-            Authorization: `Bearer ${localStorage.getItem('token')}`
-          }
-        })
-      setDestinationSuggestions(response.data)
-    } catch {
+    setActiveField('pickup')
+    if (!value.trim()) {
+      setPickupSuggestions([])
+      return
+    }
 
+    try {
+      const response = await axios.get(`${import.meta.env.VITE_BASE_URL}/maps/get-suggestions`, {
+        params: { input: value, ltd: latitude, lng: longitude },
+        headers: { Authorization: `Bearer ${localStorage.getItem('token')}` }
+      })
+      setPickupSuggestions(response.data.predictions)
+    } catch (error) {
+      console.error(error)
     }
   }
+
+  const handleDestinationChange = async (e) => {
+    const value = e.target.value
+    setDestination(value)
+    setPanelOpen(true)
+    setActiveField('destination')
+
+    if (!value.trim()) {
+      setDestinationSuggestions([])
+      return
+    }
+
+    try {
+      const response = await axios.get(`${import.meta.env.VITE_BASE_URL}/maps/get-suggestions`, {
+        params: { input: value, ltd: latitude, lng: longitude },
+        headers: { Authorization: `Bearer ${localStorage.getItem('token')}` }
+      })
+      setDestinationSuggestions(response.data.predictions)
+    } catch (error) {
+      console.error(error)
+    }
+  }
+
 
   useGSAP(() => {
     if (panelOpen) {
@@ -278,6 +288,7 @@ console.log(response.data)
           <LocationSearchPanel
             suggestions={activeField === 'pickup' ? pickupSuggestions : destinationSuggestions}
             setPanelOpen={setPanelOpen}
+            searchHistory={searchHistory}
             setvehicalPanel={setvehicalPanel}
             setPickup={setPickup}
             setDestination={setDestination}

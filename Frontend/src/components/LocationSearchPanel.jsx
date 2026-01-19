@@ -1,15 +1,17 @@
-import { MapPinIcon } from 'lucide-react'
+import { MapPinIcon, Clock } from 'lucide-react'
 import React from 'react'
+import axios from 'axios'
 
 function LocationSearchPanel({
   suggestions,
   setPanelOpen,
-  setvehicalPanel,
   setPickup,
   setDestination,
-  activeField
+  activeField,
+  searchHistory = [] 
 }) {
-  const handleSuggestionClick = (suggestion) => {
+  
+  const handleSuggestionClick = async (suggestion) => {
     const address = suggestion.description
 
     if (activeField === 'pickup') {
@@ -18,22 +20,37 @@ function LocationSearchPanel({
       setDestination(address)
     }
 
-    // setvehicalPanel(true)
-    // setPanelOpen(false)
+
+    try {
+      await axios.post(`${import.meta.env.VITE_BASE_URL}/users/save-suggestion`, {
+        suggestion: {
+          description: suggestion.description,
+          place_id: suggestion.place_id || suggestion.placeId 
+        }
+      }, {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem('token')}`
+        }
+      })
+    } catch (err) {
+      console.error("Failed to save history", err)
+    }
   }
+
+  const displayList = suggestions.length > 0 ? suggestions : searchHistory
 
   return (
     <div>
-      {suggestions.map((elem, index) => (
+      {displayList.map((elem, index) => (
         <div
           key={index}
           onClick={() => handleSuggestionClick(elem)}
           className='flex items-center rounded-xl gap-2 my-2 border-2 border-gray-50 active:border-black p-2'
         >
           <div className='bg-[#eee] rounded-full p-1'>
-            <MapPinIcon size={18} />
+            {suggestions.length > 0 ? <MapPinIcon size={18} /> : <Clock size={18} />}
           </div>
-          <p className='text-md text-'>
+          <p className='text-md'>
             {elem.description}
           </p>
         </div>

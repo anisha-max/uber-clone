@@ -63,7 +63,7 @@ const MAX_HISTORY = 5
 
 module.exports.saveUserSuggestion = async (req, res) => {
   try {
-    const userId = req.user._id          // from auth middleware
+    const userId = req.user._id         
     const suggestion = req.body.suggestion
 
     if (!suggestion || !suggestion.place_id) {
@@ -73,7 +73,6 @@ module.exports.saveUserSuggestion = async (req, res) => {
     const user = await userModel.findById(userId)
     if (!user) return res.status(404).json({ error: 'User not found' })
 
-    // check if suggestion already exists
     const existing = user.searchHistory.find(
       item => item.placeId === suggestion.place_id
     )
@@ -88,7 +87,6 @@ module.exports.saveUserSuggestion = async (req, res) => {
       })
     }
 
-    // Keep only top MAX_HISTORY by count (most used)
     user.searchHistory.sort((a, b) => b.count - a.count)
     user.searchHistory = user.searchHistory.slice(0, MAX_HISTORY)
 
