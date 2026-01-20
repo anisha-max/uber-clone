@@ -3,6 +3,8 @@ import React, { useContext } from 'react'
 import { Link, useLocation, useNavigate } from 'react-router-dom'
 import {SocketContext} from '../context/SocketContext'
 import LiveTracking from '../components/LiveTracking'
+import { useRideCoordinates } from '../components/useRideCoordinates'
+import RouteMap from '../components/RouteMap'
 
 
 function Riding() {
@@ -11,6 +13,7 @@ function Riding() {
   const {socket} = useContext(SocketContext)
   const navigate = useNavigate()
 
+     const { pickupC, destinationC, loading, error } = useRideCoordinates(ride);
   socket.on("ride-ended" ,()=>{
     navigate('/home')
   })
@@ -20,7 +23,18 @@ function Riding() {
         <Home />
       </Link>
       <div className='h-1/2'>
-      <LiveTracking/>
+      {ride ? <RouteMap
+          locationA={{
+            lat: destinationC?.ltd,
+            lng: destinationC?.lng,
+          }}
+          locationB={{
+            lat: pickupC?.ltd,
+            lng: pickupC?.lng,
+          }}
+          locationAIcon="/car.webp"
+          locationBIcon="/user.png"
+        /> : <LiveTracking />}
       </div>
       <div className="h-1/2 p-4">
         <div className='flex items-center justify-between'>

@@ -14,6 +14,8 @@ import { UserDataContext } from '../context/UserContext'
 import { SocketContext } from '../context/SocketContext'
 import { useNavigate } from 'react-router-dom'
 import LiveTracking from '../components/LiveTracking'
+import RouteMap from '../components/RouteMap'
+import { useRideCoordinates } from '../components/useRideCoordinates'
 
 function Home() {
   const [pickup, setPickup] = useState('')
@@ -37,6 +39,7 @@ function Home() {
   const [latitude, setLatitude] = useState(null)
   const [longitude, setLongitude] = useState(null)
   const [searchHistory, setSearchHistory] = useState([])
+  const { pickupC, destinationC, loading, error } = useRideCoordinates(ride);
 
   const navigate = useNavigate()
 
@@ -92,6 +95,7 @@ function Home() {
     setWaitingForDriverPanel(true)
     setVehicleFoundPanel(false)
     setRide(ride)
+    console.log(ride)
   })
 
   socket.on('ride-started', ride => {
@@ -232,7 +236,6 @@ function Home() {
         Authorization: `Bearer ${localStorage.getItem('token')}`
       }
     })
-    console.log(response.data)
   }
 
 
@@ -242,7 +245,18 @@ function Home() {
         <h1 className='text-4xl font-semibold mb-5'>Uber</h1>
       </div>
       <div className='h-screen w-screen'>
-        <LiveTracking />
+        {ride ? <RouteMap
+          locationA={{
+            lat: ride?.captain?.location?.ltd,
+            lng: ride?.captain?.location?.lng,
+          }}
+          locationB={{
+            lat: pickupC?.ltd,
+            lng: pickupC?.lng,
+          }}
+          locationAIcon="/car.webp"
+          locationBIcon="/user.png"
+        /> : <LiveTracking />}
       </div>
       <div className='h-screen flex flex-col justify-end absolute top-0 w-full '>
         <div className='h-[35%] bg-white p-6 relative'>
@@ -273,7 +287,7 @@ function Home() {
               }}
               value={destination}
               onChange={handleDestinationChange}
-              className='bg-[#eee] px-10 py-2 text-base rounded-lg w-full mt-3'
+              className='bg-[#eee] px-10 py-2 text-base rounded-lg w-full mt-3 '
               type='text'
               placeholder='Enter your destination' />
           </form>

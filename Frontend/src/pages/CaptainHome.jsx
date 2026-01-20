@@ -10,6 +10,8 @@ import { SocketContext } from '../context/SocketContext'
 import { CaptainDataContext } from '../context/CaptainContext'
 import axios from 'axios'
 import LiveTracking from '../components/LiveTracking'
+import RouteMap from '../components/RouteMap'
+import { useRideCoordinates } from '../components/useRideCoordinates'
 
 
 function CaptainHome() {
@@ -17,28 +19,30 @@ function CaptainHome() {
   const ridePopUpPanelRef = useRef(null)
   const [confirmRidePopUpPanel, setConfirmRidePopUpPanel] = useState(false)
   const confirmRidePopUpPanelRef = useRef(null)
+  const [isNavigating, setIsNavigating] = useState(false)
   const { socket } = useContext(SocketContext)
   const { captain } = useContext(CaptainDataContext)
   const [ride, setRide] = useState(null)
+  const { pickupC } = useRideCoordinates(ride);
+  async function confirmRide() {
 
-    async function confirmRide() {
+    const response = await axios.post(`${import.meta.env.VITE_BASE_URL}/rides/confirm`, {
 
-        const response = await axios.post(`${import.meta.env.VITE_BASE_URL}/rides/confirm`, {
-
-            rideId: ride._id,
-            captainId: captain._id,
+      rideId: ride._id,
+      captainId: captain._id,
 
 
-        }, {
-            headers: {
-                Authorization: `Bearer ${localStorage.getItem('token')}`
-            }
-        })
+    }, {
+      headers: {
+        Authorization: `Bearer ${localStorage.getItem('token')}`
+      }
+    })
 
-        setRidePopUpPanel(false)
-        setConfirmRidePopUpPanel(true)
+    setRidePopUpPanel(false)
+    setConfirmRidePopUpPanel(true)
+    setIsNavigating(true)
 
-    }
+  }
 
   useEffect(() => {
     if (!captain || !captain._id) return
@@ -106,8 +110,18 @@ function CaptainHome() {
         </Link>
       </div>
       <div className='h-3/5'>
-        {/* <img className='h-full w-full object-cover' src='/uber.webp' /> */}
-        <LiveTracking/>
+        {ride ? <RouteMap
+          locationA={{
+            lat: captain?.location?.ltd,
+            lng: captain?.location?.lng,
+          }}
+          locationB={{
+            lat: pickupC?.ltd,
+            lng: pickupC?.lng,
+          }}
+          locationAIcon="/car.webp"
+          locationBIcon="/user.png"
+        /> : <LiveTracking />}
       </div>
       <div className="h-2/5 p-6">
         <CaptainDetails />

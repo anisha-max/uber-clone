@@ -1,7 +1,41 @@
 import { Banknote, ChevronDown, MapPinCheckIcon, MapPinIcon } from 'lucide-react'
-import React from 'react'
+import React, { useEffect, useState } from 'react'
+import axios from 'axios'
 
-function RidePopUp({ride ,confirmRide,setRidePopUpPanel ,setConfirmRidePopUpPanel}) {
+function RidePopUp({ ride, confirmRide, setRidePopUpPanel, setConfirmRidePopUpPanel }) {
+    const [distance, setDistance] = useState()
+    const [time, setTime] = useState()
+    useEffect(() => {
+        if (!ride) return;
+
+        const fetchDistanceTime = async () => {
+            try {
+                const response = await axios.get(
+                    `${import.meta.env.VITE_BASE_URL}/maps/get-distance-time`,
+                    {
+                        params: {
+                            origin: ride.pickup,
+                            destination: ride.destination,
+                        },
+                        headers: {
+                            Authorization: `Bearer ${localStorage.getItem("token")}`,
+                        },
+                    }
+                );
+
+                if (response.status === 200) {
+                    setDistance(response.data.distance.text)
+                    setTime(response.data.duration.text)
+                }
+            } catch (error) {
+                console.error("Error fetching distance/time:", error);
+            }
+        };
+
+
+        fetchDistanceTime();
+    }, [ride]);
+
     return (
         <div >
             <button onClick={() => { setRidePopUpPanel(prev => !prev) }} className=' flex justify-center w-full py-3 mb-1 '>
@@ -17,7 +51,10 @@ function RidePopUp({ride ,confirmRide,setRidePopUpPanel ,setConfirmRidePopUpPane
                         </h3>
                     </div>
                     <div>
-                        <h3 className='text-xl font-medium'>2.2km</h3>
+                        <h3 className='text-lg font-medium'>{distance}</h3>
+                        <p className='font-gray-500 text-sm'>
+                            {time}
+                        </p>
                     </div>
                 </div>
                 <div className='w-full '>
@@ -53,9 +90,10 @@ function RidePopUp({ride ,confirmRide,setRidePopUpPanel ,setConfirmRidePopUpPane
                     <button onClick={() => { setRidePopUpPanel(prev => !prev) }} className=' bg-gray-200 font-semibold text-gray-500 rounded-lg py-2 px-4 '>
                         Ignore
                     </button>
-    <button onClick={() => { setConfirmRidePopUpPanel(prev => !prev)
-        confirmRide()
-     }}  className=' bg-green-500 font-semibold text-white rounded-lg py-2 px-4'>
+                    <button onClick={() => {
+                        setConfirmRidePopUpPanel(prev => !prev)
+                        confirmRide()
+                    }} className=' bg-green-500 font-semibold text-white rounded-lg py-2 px-4'>
                         Accept
                     </button>
 

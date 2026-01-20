@@ -2,13 +2,14 @@ import { Banknote, ChevronDown, MapPinCheckIcon, MapPinIcon } from 'lucide-react
 import React, { useState } from 'react'
 import axios from 'axios'
 import { useNavigate } from 'react-router-dom'
+import OTPInput from './OTPInput'
 
 const ConfirmRidePopUp = ({ ride, setRidePopUpPanel, setConfirmRidePopUpPanel }) => {
     const [otp, setOtp] = useState("")
-const navigate = useNavigate()
+    const navigate = useNavigate()
     const submitHandler = async (e) => {
         e.preventDefault()
-          const response = await axios.get(`${import.meta.env.VITE_BASE_URL}/rides/start-ride`, {
+        const response = await axios.get(`${import.meta.env.VITE_BASE_URL}/rides/start-ride`, {
             params: {
                 rideId: ride._id,
                 otp: otp
@@ -17,11 +18,11 @@ const navigate = useNavigate()
                 Authorization: `Bearer ${localStorage.getItem('token')}`
             }
         })
-        if(response.status===200){
+        if (response.status === 200) {
             console.log(ride)
             setConfirmRidePopUpPanel(false)
             setRidePopUpPanel(false)
-            navigate('/captain-riding' , {state:{ride:ride}})
+            navigate('/captain-riding', { state: { ride: ride } })
         }
     }
 
@@ -74,9 +75,9 @@ const navigate = useNavigate()
                 </div>
                 <div className='mt-3 w-full'>
                     <form onSubmit={submitHandler}>
-                        <input type='text' value={otp} onChange={(e) => {
-                            setOtp(e.target.value)
-                        }} className='bg-[#eee] px-10 py-2 mb-3 text-base font-mono rounded-lg w-full mt-3' placeholder='Enter otp' />
+                        <div className='mb-3 w-fit mx-auto'>
+                            <OTPInput length={6} onChange={setOtp} />
+                        </div>
                         <button className='w-full bg-green-500 flex justify-center  font-semibold text-white rounded-lg py-2 px-4'>
                             Confirm
                         </button>

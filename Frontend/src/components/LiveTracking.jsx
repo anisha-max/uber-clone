@@ -22,7 +22,7 @@ const LiveTracking = () => {
 
   return (
     <GoogleMap
-      mapContainerStyle={{ width: '100%', height: '100vh' }}
+      mapContainerStyle={{ width: '100%', height: '60vh' }}
       center={currentPosition}
       zoom={15}
     >

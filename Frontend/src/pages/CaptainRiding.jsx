@@ -5,12 +5,15 @@ import { useGSAP } from "@gsap/react"
 import gsap from 'gsap'
 import FinishRide from '../components/FinishRide'
 import LiveTracking from '../components/LiveTracking'
+import RouteMap from '../components/RouteMap'
+import { useRideCoordinates } from '../components/useRideCoordinates'
 
 const CaptainRiding = () => {
     const finishRidePanelRef = useRef(null)
     const [finishRidePanel, setfinishRidePanel] = useState(false)
     const location = useLocation()
     const rideData = location.state?.ride
+       const { pickupC, destinationC, loading, error } = useRideCoordinates(rideData);
 
     useGSAP(() => {
         if (finishRidePanel) {
@@ -32,7 +35,18 @@ const CaptainRiding = () => {
                 </Link>
             </div>
             <div className='h-4/5'>
-              <LiveTracking/>
+              {rideData ? <RouteMap
+          locationA={{
+            lat: destinationC?.ltd,
+            lng: destinationC?.lng,
+          }}
+          locationB={{
+            lat: pickupC?.ltd,
+            lng: pickupC?.lng,
+          }}
+          locationAIcon="/car.webp"
+          locationBIcon="/user.png"
+        /> : <LiveTracking />}
             </div>
             <div className="h-1/5   bg-yellow-400" onClick={() => {
                 setfinishRidePanel(true)
