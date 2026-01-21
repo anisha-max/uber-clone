@@ -24,6 +24,7 @@ function CaptainHome() {
   const { captain } = useContext(CaptainDataContext)
   const [ride, setRide] = useState(null)
   const { pickupC } = useRideCoordinates(ride);
+  const [rideMap , setRideMap] = useState(false)
   async function confirmRide() {
 
     const response = await axios.post(`${import.meta.env.VITE_BASE_URL}/rides/confirm`, {
@@ -37,10 +38,14 @@ function CaptainHome() {
         Authorization: `Bearer ${localStorage.getItem('token')}`
       }
     })
-
+    if(response.status===200){
+      setRideMap(true)
+      
     setRidePopUpPanel(false)
     setConfirmRidePopUpPanel(true)
     setIsNavigating(true)
+    }
+
 
   }
 
@@ -110,7 +115,7 @@ function CaptainHome() {
         </Link>
       </div>
       <div className='h-3/5'>
-        {ride ? <RouteMap
+        {rideMap  ? <RouteMap
           locationA={{
             lat: captain?.location?.ltd,
             lng: captain?.location?.lng,

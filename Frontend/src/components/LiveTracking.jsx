@@ -3,7 +3,19 @@ import { GoogleMap, useJsApiLoader, CircleF } from '@react-google-maps/api';
 
 const LiveTracking = () => {
   const [currentPosition, setCurrentPosition] = useState({ lat: -3.745, lng: -38.523 });
-
+  const mapOptions = {
+    disableDefaultUI: true,
+    draggable: false,
+    zoomControl: false,
+    scrollwheel: false,
+    disableDoubleClickZoom: true,
+    gestureHandling: "none",
+     styles: [
+    { featureType: "transit", stylers: [{ visibility: "off" }] },
+    { featureType: "administrative", stylers: [{ visibility: "off" }] },
+    { featureType: "water", elementType: "geometry", stylers: [{ color: "#eaeaea" }] },
+  ],
+  }
   const { isLoaded } = useJsApiLoader({
     id: 'google-map-script',
     googleMapsApiKey: import.meta.env.VITE_GOOGLE_MAPS_API,
@@ -25,6 +37,7 @@ const LiveTracking = () => {
       mapContainerStyle={{ width: '100%', height: '60vh' }}
       center={currentPosition}
       zoom={15}
+      options={mapOptions}
     >
       <CircleF
         center={currentPosition}

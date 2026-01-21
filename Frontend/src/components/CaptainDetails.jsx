@@ -16,35 +16,33 @@ function CaptainDetails() {
 
   return (
     <>
-      <div className='flex items-center justify-between p-1'>
-        <div className='flex items-center justify-start gap-3'>
-          <img src='/uber.webp' className='w-10 h-10 rounded-full object-cover' />
-          <h4 className='text-lg font-medium capitalize'>
+
+      <div className='flex items-center justify-between gap-3 mb-3'>
+        <img src='/captain.png' className='w-14 h-14 rounded-full object-cover' />
+        <div>
+          <h4 className='text-lg font-medium text-end capitalize'>
             {captain.fullname.firstname} {captain.fullname.lastname || ""}
           </h4>
-        </div>
-
-        <div>
-          <h4 className='text-xl font-semibold'>₹195.20</h4>
-          <p className='text-sm text-gray-600'>Earned</p>
+          <p className='text-sm'><span className='font-semibold'>Veh. no.</span>{captain.vehicle.plate}</p>
         </div>
       </div>
 
-      <div className='flex p-3 bg-gray-100 rounded-xl justify-center gap-5 items-start my-3'>
+
+      <div className='flex py-4 px-3 bg-gray-200 rounded-xl justify-center gap-3 items-start mt-4'>
         <div className='text-center'>
-          <Clock className='mx-auto mb-2' size={28} strokeWidth={1.4} />
+          <Clock className='mx-auto mb-1' size={24} strokeWidth={1.4} />
           <h5 className='text-lg font-medium'>10.2</h5>
           <p className='text-sm text-gray-600'>Hours online</p>
         </div>
 
         <div className='text-center'>
-          <CircleGauge className='mx-auto mb-2' size={26} strokeWidth={1.4} />
+          <CircleGauge className='mx-auto mb-1' size={22} strokeWidth={1.4} />
           <h5 className='text-lg font-medium'>10.2</h5>
           <p className='text-sm text-gray-600'>Hours online</p>
         </div>
 
         <div className='text-center'>
-          <Banknote className='mx-auto mb-2' size={30} strokeWidth={1.4} />
+          <Banknote className='mx-auto mb-1' size={24} strokeWidth={1.4} />
           <h5 className='text-lg font-medium'>10.2</h5>
           <p className='text-sm text-gray-600'>Hours online</p>
         </div>

@@ -5,11 +5,11 @@ const OTPInput = ({ length = 6, onChange }) => {
   const inputsRef = useRef([]);
 
   const handleChange = (e, index) => {
-    const value = e.target.value.replace(/\D/g, ""); // digits only
+    const value = e.target.value.replace(/\D/g, "");
     if (!value) return;
 
     const newOtp = [...otp];
-    newOtp[index] = value[0]; // only first digit
+    newOtp[index] = value[0]; 
     setOtp(newOtp);
     onChange?.(newOtp.join(""));
 
@@ -20,7 +20,7 @@ const OTPInput = ({ length = 6, onChange }) => {
 
   const handleKeyDown = (e, index) => {
     if (e.key === "Backspace") {
-      e.preventDefault(); // stop default delete behavior
+      e.preventDefault();
       const newOtp = [...otp];
 
       if (otp[index]) {
@@ -37,7 +37,10 @@ const OTPInput = ({ length = 6, onChange }) => {
   };
 
   return (
-    <div className="flex gap-2">
+ <>
+      <h3 className="text-lg font-semibold mb-1">Enter OTP</h3>
+    <div className="flex gap-2 mx-auto">
+    
       {otp.map((digit, i) => (
         <input
           key={i}
@@ -48,10 +51,10 @@ const OTPInput = ({ length = 6, onChange }) => {
           value={digit}
           onChange={(e) => handleChange(e, i)}
           onKeyDown={(e) => handleKeyDown(e, i)}
-          className="w-12 h-12 text-center text-xl border rounded-lg bg-[#eee]"
+          className="w-10 h-10 text-center text-lg border border-gray-400 rounded-lg bg-gray-50"
         />
       ))}
-    </div>
+    </div></>
   );
 };
 

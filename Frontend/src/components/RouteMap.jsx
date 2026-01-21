@@ -57,6 +57,21 @@ const IconMarker = ({ position, icon, size = 40, pulse }) => {
   );
 };
 
+const routeMapOptions = {
+  disableDefaultUI: true,
+  draggable: false,
+  zoomControl: false,
+  scrollwheel: false,
+  disableDoubleClickZoom: true,
+  gestureHandling: "none",
+styles: [
+  { elementType: "geometry", stylers: [{ color: "#f2f2f2" }] },
+  { featureType: "water", elementType: "geometry", stylers: [{ color: "#e6e6e6" }] },
+  { featureType: "transit", stylers: [{ visibility: "off" }] },
+  { featureType: "administrative", stylers: [{ visibility: "off" }] },
+]
+
+};
 const RouteMap = ({
   locationA,
   locationB,
@@ -112,14 +127,11 @@ const RouteMap = ({
   if (!isLoaded) return <div>Loading map…</div>;
 
   return (
-    <div style={{ height: "80vh", width: "100%", position: "relative" }}>
+    <div style={{ height: "60vh", width: "100%", position: "relative" }}>
       <GoogleMap
         mapContainerStyle={{ height: "100%", width: "100%" }}
         onLoad={(map) => (mapRef.current = map)}
-        options={{
-          disableDefaultUI: true,
-          gestureHandling: "greedy",
-        }}
+        options={routeMapOptions}
       >
         {/* Route */}
         {directionsResponse && (
@@ -127,11 +139,6 @@ const RouteMap = ({
             directions={directionsResponse}
             options={{
               suppressMarkers: true,
-              polylineOptions: {
-                strokeColor: "#000",
-                strokeWeight: 5,
-                strokeOpacity: 0.8,
-              },
             }}
           />
         )}
@@ -152,48 +159,8 @@ const RouteMap = ({
           pulse={locationBPulse}
         />
       </GoogleMap>
-
-      {/* Bottom sheet */}
-      <div style={styles.bottomSheet}>
-        <div style={styles.dragHandle} />
-        <button style={styles.actionButton} onClick={calculateRoute}>
-          RE-CENTER ROUTE
-        </button>
-      </div>
     </div>
   );
-};
-
-const styles = {
-  bottomSheet: {
-    position: "absolute",
-    bottom: 0,
-    width: "100%",
-    backgroundColor: "#fff",
-    zIndex: 10,
-    padding: "16px 20px 32px",
-    borderTopLeftRadius: "24px",
-    borderTopRightRadius: "24px",
-    boxShadow: "0 -10px 30px rgba(0,0,0,0.08)",
-  },
-  dragHandle: {
-    width: "40px",
-    height: "4px",
-    backgroundColor: "#e5e7eb",
-    borderRadius: "2px",
-    margin: "0 auto 16px",
-  },
-  actionButton: {
-    width: "100%",
-    backgroundColor: "#000",
-    color: "#fff",
-    border: "none",
-    padding: "14px",
-    borderRadius: "12px",
-    fontSize: "15px",
-    fontWeight: "600",
-    cursor: "pointer",
-  },
 };
 
 export default RouteMap;
