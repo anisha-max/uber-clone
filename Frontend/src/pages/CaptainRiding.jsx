@@ -35,7 +35,7 @@ const CaptainRiding = () => {
                 </Link>
             </div>
             <div className='h-4/5'>
-              {rideData ? <RouteMap
+              {/* {rideData ? <RouteMap
           locationA={{
             lat: destinationC?.ltd,
             lng: destinationC?.lng,
@@ -46,7 +46,9 @@ const CaptainRiding = () => {
           }}
           locationAIcon="/car.webp"
           locationBIcon="/user.png"
-        /> : <LiveTracking />}
+          height={"80vh"}
+        /> : <LiveTracking />} */}
+        <LiveTracking />
             </div>
             <div className="h-1/5   bg-yellow-400" onClick={() => {
                 setfinishRidePanel(true)

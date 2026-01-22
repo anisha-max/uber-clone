@@ -115,7 +115,7 @@ function CaptainHome() {
         </Link>
       </div>
       <div className='h-3/5'>
-        {rideMap  ? <RouteMap
+        {/* {rideMap  ? <RouteMap
           locationA={{
             lat: captain?.location?.ltd,
             lng: captain?.location?.lng,
@@ -126,7 +126,9 @@ function CaptainHome() {
           }}
           locationAIcon="/car.webp"
           locationBIcon="/user.png"
-        /> : <LiveTracking />}
+          height="60vh"
+        /> : <LiveTracking />} */}
+        <LiveTracking />
       </div>
       <div className="h-2/5 p-6">
         <CaptainDetails />

@@ -64,7 +64,7 @@ function RidePopUp({ ride, confirmRide, setRidePopUpPanel, setConfirmRidePopUpPa
                                 <MapPinIcon size={16} />
                                 <h3 className='text-lg font-medium'>Pickup</h3>
                             </div>
-                            <p className='text-gray-900   text-sm -mt-1'>
+                            <p className='text-gray-600   text-sm -mt-1'>
                                 {ride?.pickup}
                             </p>
                         </div>
@@ -75,7 +75,7 @@ function RidePopUp({ ride, confirmRide, setRidePopUpPanel, setConfirmRidePopUpPa
                                 <MapPinCheckIcon size={16} />
                                 <h3 className='text-lg font-medium'>Destination</h3>
                             </div>
-                            <p className='text-gray-900 text-sm -mt-1'>
+                            <p className='text-gray-600 text-sm -mt-1'>
                                 {ride?.destination}
                             </p>
                         </div>
@@ -84,7 +84,7 @@ function RidePopUp({ ride, confirmRide, setRidePopUpPanel, setConfirmRidePopUpPa
                         <div >
                             <div className='flex gap-1 items-center mb-1'>
                                 <Banknote size={16}/>
-                                <p className='text-gray-900   text-sm -mt-1'>
+                                <p className='text-gray-600   text-sm -mt-1'>
                                     Total Fare
                                 </p>
                             </div>

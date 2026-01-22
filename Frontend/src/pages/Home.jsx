@@ -150,7 +150,7 @@ function Home() {
   useGSAP(() => {
     if (panelOpen) {
       gsap.to(panelRef.current, {
-        height: '70%'
+        height: '50%'
       })
     } else {
       gsap.to(panelRef.current, {
@@ -244,8 +244,8 @@ function Home() {
       <div className='absolute top-5 left-5'>
         <h1 className='text-4xl font-semibold mb-5'>Uber</h1>
       </div>
-      <div className='h-screen w-screen'>
-        {ride ? <RouteMap
+      <div className='h-[60vh]'>
+        {/* {ride ? <RouteMap
           locationA={{
             lat: ride?.captain?.location?.ltd,
             lng: ride?.captain?.location?.lng,
@@ -256,10 +256,12 @@ function Home() {
           }}
           locationAIcon="/car.webp"
           locationBIcon="/user.png"
-        /> : <LiveTracking />}
+          height={"60vh"}
+        /> : <LiveTracking />} */}
+        <LiveTracking />
       </div>
       <div className='h-screen flex flex-col justify-end absolute top-0 w-full '>
-        <div className='h-[35%] bg-white p-6 relative'>
+        <div className='h-[40vh] bg-white p-6 relative'>
           <button onClick={() => { setPanelOpen(prev => !prev) }} className='absolute top-3 right-3'>
             {panelOpen ? <ChevronDown /> : <ChevronUp />}
           </button>
@@ -298,7 +300,7 @@ function Home() {
             Find ride
           </button>
         </div>
-        <div className='px-6 bg-white ' ref={panelRef}>
+        <div className=' bg-white overflow-scroll' ref={panelRef}>
           <LocationSearchPanel
             suggestions={activeField === 'pickup' ? pickupSuggestions : destinationSuggestions}
             setPanelOpen={setPanelOpen}

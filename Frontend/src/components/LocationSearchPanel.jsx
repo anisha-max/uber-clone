@@ -35,12 +35,13 @@ function LocationSearchPanel({
     } catch (err) {
       console.error("Failed to save history", err)
     }
+
   }
 
   const displayList = suggestions.length > 0 ? suggestions : searchHistory
 
   return (
-    <div>
+    <div className='overflow-y-auto  bg-white'>
       {displayList.map((elem, index) => (
         <div
           key={index}

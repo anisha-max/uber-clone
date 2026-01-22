@@ -84,7 +84,7 @@ const ConfirmRidePopUp = ({ ride, setRidePopUpPanel, setConfirmRidePopUpPanel })
                             <MapPinIcon size={14} className='' />
                             <h3 className='font-medium'>Pick up</h3>
                         </div>
-                        <p className='text-gray-900 text-sm '>
+                        <p className='text-gray-600 text-sm '>
                             {ride?.pickup}
                         </p>
 

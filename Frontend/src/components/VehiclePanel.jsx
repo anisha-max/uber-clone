@@ -38,7 +38,7 @@ function VehiclePanel({ fare , selectVehicle ,setvehicalPanel ,setConfirmedRideP
 
     return (
         <>
-            <button onClick={() => { setvehicalPanel(prev => !prev) }} className=' flex justify-center w-full py-3 mb-1 '>
+            <button onClick={() => { setvehicalPanel(prev => !prev) }} className='bg-gray-50 flex justify-center w-full pt-1 '>
                 <ChevronDown className='text-gray-400 w-40' />
             </button>
             <h3 className='text-2xl font-semibold px-3 mb-1'>Choose a vehicle</h3>

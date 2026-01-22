@@ -6,7 +6,7 @@ import {
   OverlayView,
 } from "@react-google-maps/api";
 
-
+// Marker component
 const IconMarker = ({ position, icon, size = 40, pulse }) => {
   if (!position) return null;
 
@@ -25,7 +25,7 @@ const IconMarker = ({ position, icon, size = 40, pulse }) => {
         }}
       >
         {/* Pulse */}
-        {pulse === true && (
+        {pulse && (
           <div
             style={{
               position: "absolute",
@@ -57,6 +57,7 @@ const IconMarker = ({ position, icon, size = 40, pulse }) => {
   );
 };
 
+// Map options
 const routeMapOptions = {
   disableDefaultUI: true,
   draggable: false,
@@ -64,28 +65,29 @@ const routeMapOptions = {
   scrollwheel: false,
   disableDoubleClickZoom: true,
   gestureHandling: "none",
-styles: [
-  { elementType: "geometry", stylers: [{ color: "#f2f2f2" }] },
-  { featureType: "water", elementType: "geometry", stylers: [{ color: "#e6e6e6" }] },
-  { featureType: "transit", stylers: [{ visibility: "off" }] },
-  { featureType: "administrative", stylers: [{ visibility: "off" }] },
-]
-
+  styles: [
+    { elementType: "geometry", stylers: [{ color: "#f2f2f2" }] },
+    { featureType: "water", elementType: "geometry", stylers: [{ color: "#e6e6e6" }] },
+    { featureType: "transit", stylers: [{ visibility: "off" }] },
+    { featureType: "administrative", stylers: [{ visibility: "off" }] },
+  ],
 };
+
 const RouteMap = ({
   locationA,
   locationB,
-
   locationAIcon,
   locationBIcon,
-
   locationAIconSize = 40,
   locationBIconSize = 34,
-
   locationAPulse = true,
   locationBPulse = true,
+  height = "400px",
+  followDriver = true,
 }) => {
   const [directionsResponse, setDirectionsResponse] = useState(null);
+  const [liveLocationA, setLiveLocationA] = useState(locationA);
+
   const mapRef = useRef(null);
 
   const { isLoaded } = useJsApiLoader({
@@ -93,41 +95,54 @@ const RouteMap = ({
     googleMapsApiKey: import.meta.env.VITE_GOOGLE_MAPS_API,
   });
 
+  // Calculate route once when map loads or destination changes
   useEffect(() => {
     if (isLoaded && locationA?.lat && locationB?.lat) {
+      const calculateRoute = async () => {
+        try {
+          const directionsService = new google.maps.DirectionsService();
+          const result = await directionsService.route({
+            origin: locationA,
+            destination: locationB,
+            travelMode: google.maps.TravelMode.DRIVING,
+            provideRouteAlternatives: false,
+            optimizeWaypoints: false,
+            drivingOptions: {
+              departureTime: new Date(),
+              trafficModel: "bestguess",
+            },
+          });
+          setDirectionsResponse(result);
+          if (mapRef.current) {
+            mapRef.current.fitBounds(result.routes[0].bounds);
+          }
+        } catch (err) {
+          console.error("Route error:", err);
+        }
+      };
       calculateRoute();
     }
   }, [isLoaded, locationA, locationB]);
 
-  const calculateRoute = async () => {
-    const directionsService = new google.maps.DirectionsService();
+  // Watch driver location (live marker)
+  useEffect(() => {
+    const watchId = navigator.geolocation.watchPosition(
+      (pos) => setLiveLocationA({
+        lat: pos.coords.latitude,
+        lng: pos.coords.longitude,
+      }),
+      (err) => console.error(err),
+      { enableHighAccuracy: true }
+    );
 
-    try {
-      const result = await directionsService.route({
-        origin: locationA,
-        destination: locationB,
-        travelMode: google.maps.TravelMode.DRIVING,
-      });
+    return () => navigator.geolocation.clearWatch(watchId);
+  }, []);
 
-      setDirectionsResponse(result);
-
-      if (mapRef.current) {
-        mapRef.current.fitBounds(result.routes[0].bounds, {
-          top: 80,
-          bottom: 200,
-          left: 60,
-          right: 60,
-        });
-      }
-    } catch (err) {
-      console.error("Route error:", err);
-    }
-  };
 
   if (!isLoaded) return <div>Loading map…</div>;
 
   return (
-    <div style={{ height: "60vh", width: "100%", position: "relative" }}>
+    <div style={{ height, width: "100%", position: "relative" }}>
       <GoogleMap
         mapContainerStyle={{ height: "100%", width: "100%" }}
         onLoad={(map) => (mapRef.current = map)}
@@ -139,19 +154,25 @@ const RouteMap = ({
             directions={directionsResponse}
             options={{
               suppressMarkers: true,
+              polylineOptions: {
+                strokeColor: "#2563eb",
+                strokeWeight: 6,
+                strokeOpacity: 1,
+                geodesic: false,
+              },
             }}
           />
         )}
 
-        {/* locationA */}
+        {/* Pickup / Driver */}
         <IconMarker
-          position={locationA}
+          position={liveLocationA}
           icon={locationAIcon}
           size={locationAIconSize}
           pulse={locationAPulse}
         />
 
-        {/* locationB */}
+        {/* Destination */}
         <IconMarker
           position={locationB}
           icon={locationBIcon}

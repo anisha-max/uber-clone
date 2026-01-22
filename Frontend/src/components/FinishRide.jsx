@@ -37,32 +37,33 @@ const FinishRide = ({ ride, setfinishRidePanel }) => {
                     </div>
                 </div>
                 <div className='w-full '>
-                    <div className='flex items-center gap-5 p-3 border-b-2 border-gray-200'>
-                        <MapPinIcon size={18} className='' />
-                        <div >
+                    <div className='p-3 border-b-2 border-gray-200'>
+                        <div className='flex items-center gap-2'>
+                            <MapPinIcon size={16} className='' />
                             <h3 className='text-lg font-medium'>Pickup</h3>
-                            <p className='text-gray-600 text-sm -mt-1'>
-                                {ride?.pickup}
-                            </p>
                         </div>
+                        <p className='text-gray-600 text-sm -mt-1'>
+                            {ride?.pickup}
+                        </p>
                     </div>
-                    <div className='flex items-center gap-5 p-3 border-b-2 border-gray-200'>
-                        <MapPinCheckIcon size={18} className='' />
-                        <div >
+                    <div className='p-3 border-b-2 border-gray-200'>
+                        <div className='flex items-center gap-2'>
+                            <MapPinCheckIcon size={16} className='' />
                             <h3 className='text-lg font-medium'>Destination</h3>
-                            <p className='text-gray-600 text-sm -mt-1'>
-                                {ride?.destination}
-                            </p>
                         </div>
+                        <p className='text-gray-600 text-sm -mt-1'>
+                            {ride?.destination}
+                        </p>
                     </div>
-                    <div className='flex items-center gap-5 p-3'>
-                        <Banknote size={22} className='' />
-                        <div >
+                    <div className='p-3'>
+                        <div className='flex items-center gap-2'>
+                            <Banknote size={18} className='' />
                             <h3 className='text-lg font-medium'>₹{ride?.fare}</h3>
-                            <p className='text-gray-600 text-sm -mt-1'>
-                                Cash
-                            </p>
                         </div>
+                        <p className='text-gray-600 text-sm -mt-1'>
+                            Cash
+                        </p>
+
                     </div>
                 </div>
                 <div className='mt-3 w-full'>
