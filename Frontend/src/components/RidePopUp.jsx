@@ -97,7 +97,7 @@ function RidePopUp({ ride, confirmRide, setRidePopUpPanel, setConfirmRidePopUpPa
                         Ignore
                     </button>
                     <button onClick={() => {
-                        setConfirmRidePopUpPanel(prev => !prev)
+                        // setConfirmRidePopUpPanel(prev => !prev)
                         confirmRide()
                     }} className=' bg-black font-semibold text-white rounded-lg py-2 px-4 hover:scale-105'>
                         Accept

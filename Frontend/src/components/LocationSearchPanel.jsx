@@ -32,8 +32,10 @@ function LocationSearchPanel({
           Authorization: `Bearer ${localStorage.getItem('token')}`
         }
       })
-    } catch (err) {
-      console.error("Failed to save history", err)
+    } catch (error) {
+  const message =
+                error.response?.data?.message || "Failed to save suggestion"
+              toast.error(message);
     }
 
   }
@@ -41,14 +43,14 @@ function LocationSearchPanel({
   const displayList = suggestions.length > 0 ? suggestions : searchHistory
 
   return (
-    <div className='overflow-y-auto  bg-white'>
+    <div className=' bg-white'>
       {displayList.map((elem, index) => (
         <div
           key={index}
           onClick={() => handleSuggestionClick(elem)}
-          className='flex items-center rounded-xl gap-2 my-2 border-2 border-gray-50 active:border-black p-2'
+          className='flex items-center cursor-pointer rounded-xl gap-2 my-2 border-2 border-gray-50 active:border-black p-2'
         >
-          <div className='bg-[#eee] rounded-full p-1'>
+          <div className='bg-gray-50 rounded-full p-1'>
             {suggestions.length > 0 ? <MapPinIcon size={18} /> : <Clock size={18} />}
           </div>
           <p className='text-md'>

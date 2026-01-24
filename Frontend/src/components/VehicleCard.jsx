@@ -1,11 +1,12 @@
 import { User2 } from 'lucide-react';
 import React from 'react'
 
-function VehicleCard({ selectVehicle, name, img, title, seats, time, desc, price, setConfirmedRidePanel }) {
+function VehicleCard({ setvehicalPanel ,selectVehicle, name, img, title, seats, time, desc, price, setConfirmedRidePanel }) {
   return (
     <div onClick={() => {
       setConfirmedRidePanel(true)
       selectVehicle(name)
+      setvehicalPanel(false)
     }}
       className='flex p-3 items-center justify-between gap-2 active:border-3 rounded-xl mb-2' >
       <img className='w-22' src={img} />

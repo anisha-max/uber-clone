@@ -12,9 +12,13 @@ import axios from 'axios'
 import LiveTracking from '../components/LiveTracking'
 import RouteMap from '../components/RouteMap'
 import { useRideCoordinates } from '../components/useRideCoordinates'
+import { toast } from 'react-toastify'
+import getDistanceInMeters from '../utils/getDistanceInMeters'
 
 
 function CaptainHome() {
+
+
   const [ridePopUpPanel, setRidePopUpPanel] = useState(false)
   const ridePopUpPanelRef = useRef(null)
   const [confirmRidePopUpPanel, setConfirmRidePopUpPanel] = useState(false)
@@ -24,30 +28,56 @@ function CaptainHome() {
   const { captain } = useContext(CaptainDataContext)
   const [ride, setRide] = useState(null)
   const { pickupC } = useRideCoordinates(ride);
-  const [rideMap , setRideMap] = useState(false)
+  const [rideMap, setRideMap] = useState(false)
   async function confirmRide() {
-
-    const response = await axios.post(`${import.meta.env.VITE_BASE_URL}/rides/confirm`, {
-
-      rideId: ride._id,
-      captainId: captain._id,
-
-
-    }, {
-      headers: {
-        Authorization: `Bearer ${localStorage.getItem('token')}`
+    const response = await axios.post(
+      `${import.meta.env.VITE_BASE_URL}/rides/confirm`,
+      {
+        rideId: ride._id,
+        captainId: captain._id,
+      },
+      {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem("token")}`,
+        },
       }
-    })
-    if(response.status===200){
-      setRideMap(true)
-      
-    setRidePopUpPanel(false)
-    setConfirmRidePopUpPanel(true)
-    setIsNavigating(true)
+    );
+
+    if (response.status === 200) {
+      setRideMap(true);
+      setRidePopUpPanel(false);
+      toast.success("Ride confirmed. Navigate to pickup.");
     }
-
-
   }
+  useEffect(() => {
+    if (!ride || !pickupC || confirmRidePopUpPanel) return;
+
+    const watchId = navigator.geolocation.watchPosition(
+      (pos) => {
+        const captainLat = pos.coords.latitude;
+        const captainLng = pos.coords.longitude;
+
+        const distance = getDistanceInMeters(
+          captainLat,
+          captainLng,
+          pickupC.ltd,
+          pickupC.lng
+        );
+
+        if (distance <= 15) {
+          setConfirmRidePopUpPanel(true);
+          toast.success("You have arrived at pickup");
+          navigator.geolocation.clearWatch(watchId);
+        }
+      },
+      null,
+      { enableHighAccuracy: true }
+    );
+
+    return () => navigator.geolocation.clearWatch(watchId);
+  }, [ride, pickupC, confirmRidePopUpPanel]);
+
+
 
   useEffect(() => {
     if (!captain || !captain._id) return
@@ -77,45 +107,40 @@ function CaptainHome() {
     return () => clearInterval(interval)
   }, [captain, socket])
 
-  socket.on('new-ride', (data) => {
-    console.log(data)
-    setRide(data)
-    setRidePopUpPanel(true)
-  })
+  useEffect(() => {
+    if (!socket) return;
+
+    const handleNewRide = (data) => {
+      setRide(data);
+      setRidePopUpPanel(true);
+    };
+
+    socket.on('new-ride', handleNewRide);
+
+    return () => {
+      socket.off('new-ride', handleNewRide);
+    };
+  }, [socket]);
 
 
   useGSAP(() => {
     if (confirmRidePopUpPanel) {
-      gsap.to(confirmRidePopUpPanelRef.current, {
-        transform: "translateY(0)"
-      })
+      gsap.to(confirmRidePopUpPanelRef.current, { bottom: 0 })
     } else {
-      gsap.to(confirmRidePopUpPanelRef.current, {
-        transform: "translateY(100%)"
-      })
+      gsap.to(confirmRidePopUpPanelRef.current, { bottom: "-100%" })
     }
   }, [confirmRidePopUpPanel])
   useGSAP(() => {
     if (ridePopUpPanel) {
-      gsap.to(ridePopUpPanelRef.current, {
-        transform: "translateY(0)"
-      })
+      gsap.to(ridePopUpPanelRef.current, { bottom: 0 })
     } else {
-      gsap.to(ridePopUpPanelRef.current, {
-        transform: "translateY(100%)"
-      })
+      gsap.to(ridePopUpPanelRef.current, { bottom: "-100%" })
     }
   }, [ridePopUpPanel])
   return (
     <div className='h-screen'>
-      <div className='fixed p-3 top-0 flex items-center justify-between w-full'>
-        <h1 className='text-4xl font-semibold mb-5'>Uber</h1>
-        <Link to="/home" className=' h-10 w-10 bg-white flex items-center justify-center rounded-full'>
-          <LogOut />
-        </Link>
-      </div>
       <div className='h-3/5'>
-        {/* {rideMap  ? <RouteMap
+        {rideMap  ? <RouteMap
           locationA={{
             lat: captain?.location?.ltd,
             lng: captain?.location?.lng,
@@ -127,16 +152,22 @@ function CaptainHome() {
           locationAIcon="/car.webp"
           locationBIcon="/user.png"
           height="60vh"
-        /> : <LiveTracking />} */}
-        <LiveTracking />
+        /> : <LiveTracking />}
+        {/* <LiveTracking /> */}
+      </div>
+      <div className='fixed p-3 top-0 flex items-center justify-between w-full'>
+        <h1 className='text-4xl font-semibold mb-5'>Uber</h1>
+        <Link to="/captain-logout" className=' h-10 w-10 bg-white flex items-center justify-center rounded-full'>
+          <LogOut />
+        </Link>
       </div>
       <div className="h-2/5 p-6">
         <CaptainDetails />
       </div>
-      <div ref={ridePopUpPanelRef} className='fixed z-10 bottom-0 translate-y-full bg-white px-3 pb-8 w-full'>
+      <div ref={ridePopUpPanelRef} className='fixed z-10  -bottom-full  bg-white px-3 pb-8 w-full'>
         <RidePopUp ride={ride} confirmRide={confirmRide} setRidePopUpPanel={setRidePopUpPanel} setConfirmRidePopUpPanel={setConfirmRidePopUpPanel} />
       </div>
-      <div ref={confirmRidePopUpPanelRef} className='fixed z-10 bottom-0 translate-y-full bg-white px-3 pb-8 w-full'>
+      <div ref={confirmRidePopUpPanelRef} className='fixed z-10  -bottom-full  bg-white px-3 pb-8 w-full'>
         <ConfirmRidePopUp ride={ride} setConfirmRidePopUpPanel={setConfirmRidePopUpPanel} setRidePopUpPanel={setRidePopUpPanel} />
       </div>
     </div>

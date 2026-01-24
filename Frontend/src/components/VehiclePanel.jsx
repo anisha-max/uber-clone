@@ -43,7 +43,7 @@ function VehiclePanel({ fare , selectVehicle ,setvehicalPanel ,setConfirmedRideP
             </button>
             <h3 className='text-2xl font-semibold px-3 mb-1'>Choose a vehicle</h3>
             {rides.map((ride) => (
-                <VehicleCard selectVehicle={selectVehicle} setConfirmedRidePanel={setConfirmedRidePanel} key={ride.id} {...ride} />
+                <VehicleCard selectVehicle={selectVehicle} setvehicalPanel={setvehicalPanel} setConfirmedRidePanel={setConfirmedRidePanel} key={ride.id} {...ride} />
             ))}
 
         </>

@@ -23,7 +23,7 @@ function Riding() {
         <Home />
       </Link>
       <div className=''>
-        {/* {ride ? <RouteMap
+        {ride ? <RouteMap
           locationA={{
             lat: destinationC?.ltd,
             lng: destinationC?.lng,
@@ -35,8 +35,8 @@ function Riding() {
           locationAIcon="/car.webp"
           locationBIcon="/user.png"
           height={"60vh"}
-        /> : <LiveTracking />} */}
-        <LiveTracking />
+        /> : <LiveTracking />}
+        {/* <LiveTracking /> */}
       </div>
       <div className=" p-4">
         {/* <div className='flex items-center justify-between'>

@@ -3,6 +3,7 @@ import React, { useEffect, useState } from 'react'
 import axios from 'axios'
 import { useNavigate } from 'react-router-dom'
 import OTPInput from './OTPInput'
+import { toast } from 'react-toastify'
 
 const ConfirmRidePopUp = ({ ride, setRidePopUpPanel, setConfirmRidePopUpPanel }) => {
     const [otp, setOtp] = useState("")
@@ -19,10 +20,10 @@ const ConfirmRidePopUp = ({ ride, setRidePopUpPanel, setConfirmRidePopUpPanel })
             }
         })
         if (response.status === 200) {
-            console.log(ride)
             setConfirmRidePopUpPanel(false)
             setRidePopUpPanel(false)
             navigate('/captain-riding', { state: { ride: ride } })
+            toast.success("Ride started")
         }
     }
     const [distance, setDistance] = useState()
@@ -91,16 +92,16 @@ const ConfirmRidePopUp = ({ ride, setRidePopUpPanel, setConfirmRidePopUpPanel })
                     </div>
                     <div className=' p-3 border-b-2 border-gray-200'>
                         <div className='flex gap-2 items-center'>
-                                 <MapPinCheckIcon size={14} className='' />
+                            <MapPinCheckIcon size={14} className='' />
                             <h3 className=' font-medium'>Destination</h3>
                         </div>
-                            <p className='text-g9ay-600 text-sm'>
-                                {ride?.destination}
-                            </p>
+                        <p className='text-gray-600 text-sm'>
+                            {ride?.destination}
+                        </p>
                     </div>
                     <div className=' p-3'>
                         <div className='flex gap-2 items-center'>
-                                 <Banknote size={16} className='' />
+                            <Banknote size={16} className='' />
                             <h3 className='text-lg font-medium'>₹{ride?.fare}</h3>
                         </div>
                     </div>

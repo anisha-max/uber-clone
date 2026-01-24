@@ -1,7 +1,7 @@
 import React, { useRef, useState } from 'react'
 import { useGSAP } from "@gsap/react"
 import gsap from 'gsap'
-import { ArrowDown, ChevronDown, ChevronUp, User2 } from 'lucide-react'
+import { ArrowDown, ChevronDown, ChevronUp, LogOut, User2 } from 'lucide-react'
 import LocationSearchPanel from '../components/LocationSearchPanel'
 import VehiclePanel from '../components/VehiclePanel'
 import ConfirmedRide from '../components/ConfirmedRide'
@@ -12,10 +12,11 @@ import { useContext } from 'react'
 import { useEffect } from 'react'
 import { UserDataContext } from '../context/UserContext'
 import { SocketContext } from '../context/SocketContext'
-import { useNavigate } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
 import LiveTracking from '../components/LiveTracking'
 import RouteMap from '../components/RouteMap'
 import { useRideCoordinates } from '../components/useRideCoordinates'
+import { toast } from 'react-toastify'
 
 function Home() {
   const [pickup, setPickup] = useState('')
@@ -84,8 +85,10 @@ function Home() {
           }
         })
         setSearchHistory(response.data.searchHistory || [])
-      } catch (err) {
-        console.error("Error fetching history", err)
+      } catch (error) {
+        const message =
+          error.response?.data?.message || "Not able to fetch history"
+        toast.error(message);
       }
     }
     fetchHistory()
@@ -95,7 +98,6 @@ function Home() {
     setWaitingForDriverPanel(true)
     setVehicleFoundPanel(false)
     setRide(ride)
-    console.log(ride)
   })
 
   socket.on('ride-started', ride => {
@@ -112,6 +114,10 @@ function Home() {
       setPickupSuggestions([])
       return
     }
+     if (value.trim().length < 3) {
+    setPickupSuggestions([]);
+    return;
+  }
 
     try {
       const response = await axios.get(`${import.meta.env.VITE_BASE_URL}/maps/get-suggestions`, {
@@ -120,7 +126,9 @@ function Home() {
       })
       setPickupSuggestions(response.data.predictions)
     } catch (error) {
-      console.error(error)
+      const message =
+        error.response?.data?.message || "Please enter pickup location again"
+      toast.error(message);
     }
   }
 
@@ -134,6 +142,10 @@ function Home() {
       setDestinationSuggestions([])
       return
     }
+      if (value.trim().length < 3) {
+    setDestinationSuggestions([]);
+    return;
+  }
 
     try {
       const response = await axios.get(`${import.meta.env.VITE_BASE_URL}/maps/get-suggestions`, {
@@ -142,7 +154,9 @@ function Home() {
       })
       setDestinationSuggestions(response.data.predictions)
     } catch (error) {
-      console.error(error)
+      const message =
+        error.response?.data?.message || "Please enter destination location again"
+      toast.error(message);
     }
   }
 
@@ -164,50 +178,34 @@ function Home() {
 
   useGSAP(() => {
     if (vehicalPanel) {
-      gsap.to(vehicalPanelRef.current, {
-        transform: "translateY(0)"
-      })
+      gsap.to(vehicalPanelRef.current, { bottom: 0 })
     } else {
-      gsap.to(vehicalPanelRef.current, {
-        transform: "translateY(100%)"
-      })
+      gsap.to(vehicalPanelRef.current, { bottom: "-100%" })
     }
   }, [vehicalPanel])
 
 
   useGSAP(() => {
     if (vehicleFoundPanel) {
-      gsap.to(vehicleFoundRef.current, {
-        transform: "translateY(0)"
-      })
+      gsap.to(vehicleFoundRef.current, { bottom: 0 })
     } else {
-      gsap.to(vehicleFoundRef.current, {
-        transform: "translateY(100%)"
-      })
+      gsap.to(vehicleFoundRef.current, { bottom: "-100%" })
     }
   }, [vehicleFoundPanel])
 
   useGSAP(() => {
     if (ConfirmedRidePanel) {
-      gsap.to(ConfirmedRidePanelRef.current, {
-        transform: "translateY(0)"
-      })
+      gsap.to(ConfirmedRidePanelRef.current, { bottom: 0 })
     } else {
-      gsap.to(ConfirmedRidePanelRef.current, {
-        transform: "translateY(100%)"
-      })
+      gsap.to(ConfirmedRidePanelRef.current, { bottom: "-100%" })
     }
   }, [ConfirmedRidePanel])
 
   useGSAP(() => {
     if (waitingForDriverPanel) {
-      gsap.to(waitingForDriverRef.current, {
-        transform: "translateY(0)"
-      })
+      gsap.to(waitingForDriverRef.current, { bottom: 0 })
     } else {
-      gsap.to(waitingForDriverRef.current, {
-        transform: "translateY(100%)"
-      })
+      gsap.to(waitingForDriverRef.current, { bottom: "-100%" })
     }
   }, [waitingForDriverPanel])
 
@@ -240,12 +238,9 @@ function Home() {
 
 
   return (
-    <div className='h-screen relative overflow-hidden'>
-      <div className='absolute top-5 left-5'>
-        <h1 className='text-4xl font-semibold mb-5'>Uber</h1>
-      </div>
+    <div className='h-screen relative'>
       <div className='h-[60vh]'>
-        {/* {ride ? <RouteMap
+        {ride ? <RouteMap
           locationA={{
             lat: ride?.captain?.location?.ltd,
             lng: ride?.captain?.location?.lng,
@@ -257,8 +252,14 @@ function Home() {
           locationAIcon="/car.webp"
           locationBIcon="/user.png"
           height={"60vh"}
-        /> : <LiveTracking />} */}
-        <LiveTracking />
+        /> : <LiveTracking />}
+        {/* <LiveTracking /> */}
+      </div>
+      <div className='fixed p-3 top-0 flex items-center justify-between w-full z-[1000]'>
+        <h1 className='text-4xl font-semibold mb-5'>Uber</h1>
+        <Link to="/user-logout" className=' h-10 w-10 bg-white flex items-center justify-center rounded-full'>
+          <LogOut />
+        </Link>
       </div>
       <div className='h-screen flex flex-col justify-end absolute top-0 w-full '>
         <div className='h-[40vh] bg-white p-6 relative'>
@@ -279,7 +280,7 @@ function Home() {
               }}
               value={pickup}
               onChange={handlePickupChange}
-              className='bg-[#eee] px-10 py-2 text-base rounded-lg w-full mt-3'
+              className='bg-gray-50 px-10 py-2 text-base rounded-lg w-full mt-3'
               type='text'
               placeholder='Add a pick-up location' />
             <input
@@ -289,18 +290,18 @@ function Home() {
               }}
               value={destination}
               onChange={handleDestinationChange}
-              className='bg-[#eee] px-10 py-2 text-base rounded-lg w-full mt-3 '
+              className='bg-gray-50 px-10 py-2 text-base rounded-lg w-full mt-3 '
               type='text'
               placeholder='Enter your destination' />
           </form>
-          <button className=' w-full bg-black mt-5 font-semibold text-white rounded-lg py-2 px-4'
+          <button className=' w-full bg-black mt-5 font-semibold text-white rounded-xl py-2 px-4'
             onClick={() => {
               findTrip()
             }}>
             Find ride
           </button>
         </div>
-        <div className=' bg-white overflow-scroll' ref={panelRef}>
+        <div className=' bg-white overflow-scroll [scrollbar-width:none] [&::-webkit-scrollbar]:hidden' ref={panelRef}>
           <LocationSearchPanel
             suggestions={activeField === 'pickup' ? pickupSuggestions : destinationSuggestions}
             setPanelOpen={setPanelOpen}
@@ -312,16 +313,16 @@ function Home() {
           />
         </div>
       </div>
-      <div ref={vehicalPanelRef} className='fixed z-10 bottom-0 translate-y-full bg-white px-3 pb-8 w-full'>
+      <div ref={vehicalPanelRef} className='fixed z-10 -bottom-full  bg-white px-3 pb-8 w-full'>
         <VehiclePanel selectVehicle={setVehicleType} fare={fare} setConfirmedRidePanel={setConfirmedRidePanel} setvehicalPanel={setvehicalPanel} />
       </div>
-      <div ref={ConfirmedRidePanelRef} className='fixed z-10 bottom-0 translate-y-full bg-white px-3 pb-8 w-full'>
+      <div ref={ConfirmedRidePanelRef} className='fixed z-10 -bottom-full  bg-white px-3 pb-8 w-full'>
         <ConfirmedRide pickup={pickup} destination={destination} createRide={createRide} fare={fare} vehicleType={vehicleType} setConfirmedRidePanel={setConfirmedRidePanel} setVehicleFoundPanel={setVehicleFoundPanel} />
       </div>
-      <div ref={vehicleFoundRef} className='fixed z-10 bottom-0 translate-y-full bg-white px-3 pb-8 w-full'>
+      <div ref={vehicleFoundRef} className='fixed z-10 -bottom-full  bg-white px-3 pb-8 w-full'>
         <LookingForDriver fare={fare} pickup={pickup} destination={destination} vehicleType={vehicleType} setVehicleFoundPanel={setVehicleFoundPanel} />
       </div>
-      <div ref={waitingForDriverRef} className='fixed z-10 bottom-0  bg-white px-3 pb-8 w-full'>
+      <div ref={waitingForDriverRef} className='fixed z-10 -bottom-full  bg-white px-3 pb-8 w-full'>
         <WaitingForDriver ride={ride} setWaitingForDriverPanel={setWaitingForDriverPanel} />
       </div>
     </div>

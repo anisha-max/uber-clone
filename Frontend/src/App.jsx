@@ -15,12 +15,14 @@ import CaptainProtectedWrapper from './pages/CaptainProtectedWrapper'
 import CaptainLogout from './pages/CaptainLogout'
 import Riding from './pages/Riding'
 import CaptainRiding from './pages/CaptainRiding'
+import { ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
+
 
 function App() {
   const data = useContext(UserDataContext)
   return (
     <>
-      <div>
         <Routes>
           <Route path='/' element={<Start />} />
           <Route path='/home' element={<UserProtectedWrapper><Home /></UserProtectedWrapper>} />
@@ -34,7 +36,14 @@ function App() {
           <Route path='/captain-logout' element={<CaptainProtectedWrapper><CaptainLogout /></CaptainProtectedWrapper>} />
           <Route path='/riding' element={<UserProtectedWrapper><Riding /></UserProtectedWrapper>} />
         </Routes>
-      </div>
+      <ToastContainer
+        toastClassName="custom-toast"
+        position="top-right"
+        autoClose={3000}
+        hideProgressBar={false}
+        closeOnClick
+        pauseOnHover
+      />
     </>
   )
 }

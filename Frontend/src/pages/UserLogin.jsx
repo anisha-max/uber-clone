@@ -2,6 +2,7 @@ import React, { useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import { UserDataContext } from '../context/UserContext'
 import axios from 'axios'
+import { toast } from 'react-toastify'
 
 function UserLogin() {
   const [email, setEmail] = useState("")
@@ -11,7 +12,14 @@ function UserLogin() {
     const navigate = useNavigate()
   const handleSubmit = async (e)=>{
     e.preventDefault()
-    const userData = {
+  try{
+    const emailValue = email.trim();
+          const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+          if (!emailRegex.test(emailValue)) {
+            toast.error("Please enter a valid email address");
+            return;
+          }
+      const userData = {
       email:email,
       password:password
     }
@@ -22,9 +30,13 @@ function UserLogin() {
       localStorage.setItem("token" ,data.token)
       navigate('/home')
     }
-
+  }catch(error){
+  const message =
+         error.response?.data?.message || "Invalid email or password"
+       toast.error(message);
+  }finally{
     setEmail('')
-    setPassword('')
+    setPassword('')}
     // console.log(userData)
   }
   return (
