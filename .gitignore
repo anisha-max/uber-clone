@@ -1,37 +1,53 @@
-# Node modules
+# ------------------------
+# Dependencies
+# ------------------------
 node_modules/
+jspm_packages/
+
+# ------------------------
+# Environment variables
+# ------------------------
+.env
+.env.*
+!.env.example
+
+# ------------------------
 # Logs
+# ------------------------
 logs/
 *.log
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
+pnpm-debug.log*
 
-# Environment variables
-.env
-.env.local
-.env.development.local
-.env.test.local
-.env.production.local
-
-# Build outputs (React)
+# ------------------------
+# Build outputs
+# ------------------------
 build/
 dist/
+coverage/
 *.tsbuildinfo
 
-# Dependency directories
-jspm_packages/
-
-# Optional npm cache
-.npm
-.eslintcache
+# ------------------------
+# Cache & temp files
+# ------------------------
 .cache/
+.npm/
+.eslintcache
+tmp/
+temp/
+*.tmp
 
+# ------------------------
 # OS files
+# ------------------------
 .DS_Store
 Thumbs.db
 
-# IDEs and editors
+# ------------------------
+# IDE / Editor files
+# ------------------------
 .vscode/
 .idea/
 *.suo
@@ -39,17 +55,24 @@ Thumbs.db
 *.njsproj
 *.sln
 
-# Temporary files
-tmp/
-temp/
-*.tmp
-
-# Coverage reports
-coverage/
-*.lcov
-
-# Misc
-*.bak
-*.swp
+# ------------------------
+# Backend specific
+# ------------------------
+uploads/
+public/uploads/
 *.pid
 *.seed
+*.bak
+*.swp
+
+# ------------------------
+# Database
+# ------------------------
+data/
+*.sqlite
+*.sqlite3
+
+# ------------------------
+# Optional: dotenv backups
+# ------------------------
+.env.backup

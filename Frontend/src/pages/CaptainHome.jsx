@@ -64,7 +64,7 @@ function CaptainHome() {
           pickupC.lng
         );
 
-        if (distance <= 15) {
+        if (distance <= 1000) {
           setConfirmRidePopUpPanel(true);
           toast.success("You have arrived at pickup");
           navigator.geolocation.clearWatch(watchId);

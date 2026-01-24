@@ -33,7 +33,7 @@ const CaptainRiding = () => {
           destinationC.lng
         )
 
-        if (distance <= 15) {
+        if (distance <= 10000) {
           setArrivedAtDestination(true)
           navigator.geolocation.clearWatch(watchId)
         }
