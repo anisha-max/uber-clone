@@ -1,78 +1,31 @@
-# ------------------------
-# Dependencies
-# ------------------------
-node_modules/
-jspm_packages/
-
-# ------------------------
-# Environment variables
-# ------------------------
-.env
-.env.*
-!.env.example
-
-# ------------------------
 # Logs
-# ------------------------
-logs/
-*.log
-npm-debug.log*
-yarn-debug.log*
-yarn-error.log*
-pnpm-debug.log*
+lerna-debug.log*
 
-# ------------------------
-# Build outputs
-# ------------------------
-build/
-dist/
-coverage/
-*.tsbuildinfo
+# Node modules
+frontend/node_modules/
+backend/node_modules/
 
-# ------------------------
-# Cache & temp files
-# ------------------------
+# Environment variables
+frontend/.env
+frontend/.env.local
+frontend/.env.*.local
+backend/.env
+backend/.env.local
+backend/.env.*.local
+
+# Build output
+frontend/dist/
+backend/dist/
+
+# Optional caches
+.npm
 .cache/
-.npm/
 .eslintcache
-tmp/
-temp/
-*.tmp
 
-# ------------------------
 # OS files
-# ------------------------
 .DS_Store
 Thumbs.db
 
-# ------------------------
-# IDE / Editor files
-# ------------------------
+# IDEs
 .vscode/
 .idea/
-*.suo
-*.ntvs*
-*.njsproj
-*.sln
-
-# ------------------------
-# Backend specific
-# ------------------------
-uploads/
-public/uploads/
-*.pid
-*.seed
-*.bak
-*.swp
-
-# ------------------------
-# Database
-# ------------------------
-data/
-*.sqlite
-*.sqlite3
-
-# ------------------------
-# Optional: dotenv backups
-# ------------------------
-.env.backup
