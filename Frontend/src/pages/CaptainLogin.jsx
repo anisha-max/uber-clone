@@ -3,10 +3,12 @@ import { Link, useNavigate } from 'react-router-dom'
 import { CaptainDataContext } from '../context/CaptainContext'
 import axios from 'axios'
 import { toast } from "react-toastify";
+import { Eye, EyeOff } from "lucide-react";
 
 function CaptainLogin() {
   const [email, setEmail] = useState("")
   const [password, setPassword] = useState("")
+  const [showPassword, setShowPassword] = useState(false);
   // const [captainData , setcaptainData] = useState({})
   const navigate = useNavigate()
   const { captain, setCaptain } = React.useContext(CaptainDataContext)
@@ -60,15 +62,27 @@ function CaptainLogin() {
               className='bg-gray-50 w-full mb-3 rounded-2xl px-4 py-2 border border-gray-200 text-lg text-gray-700 placeholder:text-base placeholder:text-gray-500' />
 
             <h3 className='text-lg font-medium mb-1'>Password</h3>
-            <input
-              id="password"
-              value={password}
-              onChange={(e) => { setPassword(e.target.value) }}
-              required
-              type='password'
-              placeholder='Enter your password'
-              className='bg-gray-50 w-full mb-7 rounded-2xl px-4 py-2 border border-gray-200 text-lg text-gray-700 placeholder:text-base placeholder:text-gray-500 ' />
+            <div className="relative">
+              <input
+                id="password"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                required
+                type={showPassword ? "text" : "password"}
+                placeholder="Enter your password"
+                className="bg-gray-50 w-full mb-7 rounded-2xl px-4 py-2 pr-12 border border-gray-200 text-lg text-gray-700 placeholder:text-base placeholder:text-gray-500"
+              />
 
+
+              <button
+                type="button"
+                onClick={() => setShowPassword(prev => !prev)}
+                disabled={!password}
+                className="absolute right-4 top-3 text-gray-500 hover:text-black cursor-pointer"
+              >
+                {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
+              </button>
+            </div>
             <button className='bg-black text-white font-semibold mb-5 rounded-xl px-4 py-2 text-center w-full'>
               Login
             </button>

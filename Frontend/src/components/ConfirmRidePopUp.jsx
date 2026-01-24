@@ -10,7 +10,12 @@ const ConfirmRidePopUp = ({ ride, setRidePopUpPanel, setConfirmRidePopUpPanel })
     const navigate = useNavigate()
     const submitHandler = async (e) => {
         e.preventDefault()
-        const response = await axios.get(`${import.meta.env.VITE_BASE_URL}/rides/start-ride`, {
+        if (otp.length !== 6) {
+toast.error("Please enter a valid 6-digit OTP");
+return;
+}
+     try{
+           const response = await axios.get(`${import.meta.env.VITE_BASE_URL}/rides/start-ride`, {
             params: {
                 rideId: ride._id,
                 otp: otp
@@ -25,6 +30,11 @@ const ConfirmRidePopUp = ({ ride, setRidePopUpPanel, setConfirmRidePopUpPanel })
             navigate('/captain-riding', { state: { ride: ride } })
             toast.success("Ride started")
         }
+    } catch (error) {
+const message =
+error.response?.data?.message || "Invalid OTP. Please try again.";
+toast.error(message);
+}
     }
     const [distance, setDistance] = useState()
     const [time, setTime] = useState()
