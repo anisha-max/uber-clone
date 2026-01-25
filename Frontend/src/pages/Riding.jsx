@@ -66,13 +66,13 @@ function Riding() {
               <div >
                 <h3 className='text-lg font-medium'>₹{ride?.fare}</h3>
                 <p className='text-gray-600 text-sm -mt-1'>
-                  Cash
+                 Pay Cash
                 </p>
               </div>
             </div>
           </div>
         </div>
-        <button className='w-full bg-green-500 font-semibold text-white rounded-lg p-2 mt-3'> Make payment</button>
+        {/* <button className='w-full bg-green-500 font-semibold text-white rounded-lg p-2 mt-3'> Make payment</button> */}
       </div>
     </div>
   )

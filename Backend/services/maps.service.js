@@ -16,7 +16,7 @@ module.exports.getAddressCoordinate = async (address) => {
             throw new Error('Unable to fetch corrdinates')
         }
     } catch (error) {
-        console.log(error)
+        // console.log(error)
         throw error
     }
 }
@@ -41,7 +41,7 @@ module.exports.getDistanceTime = async (origin, destination) => {
             throw new Error('Unable to fetch distance and time ')
         }
     } catch (error) {
-        console.log(error)
+        // console.log(error)
         throw error
     }
 }

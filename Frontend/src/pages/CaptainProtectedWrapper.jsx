@@ -28,13 +28,13 @@ function CaptainProtectedWrapper({ children }) {
           }
         )
 
-        console.log("PROFILE RESPONSE:", response.data)
+        // console.log("PROFILE RESPONSE:", response.data)
 
         // 🔑 SAFE assignment (THIS LINE MATTERS MOST)
         setCaptain(response.data.captain || response.data)
 
       } catch (err) {
-        console.log("PROFILE ERROR:", err)
+        // console.log("PROFILE ERROR:", err)
         localStorage.removeItem("token")
         navigate("/captain-login")
       } finally {

@@ -12,7 +12,7 @@ function UserLogout() {
     }).then((response)=>{
         if(response.status === 200){
             localStorage.removeItem('token')
-            console.log(token)
+            // console.log(token)
             navigate('/login')
         }
     })

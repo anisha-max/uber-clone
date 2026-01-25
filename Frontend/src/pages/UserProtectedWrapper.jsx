@@ -33,7 +33,7 @@ function UserProtectedWrapper({ children }) {
           setIsLoading(false)
         }
       } catch (err) {
-        console.log(err)
+        // console.log(err)
         localStorage.removeItem("token")
         navigate("/login")
       }

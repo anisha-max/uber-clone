@@ -21,7 +21,7 @@ function CaptainSignUp() {
 
   const handleSubmit = async (e) => {
     e.preventDefault()
-    console.log(email, password)
+    // console.log(email, password)
     // Trim inputs
     const fName = firstname.trim();
     const lName = lastname.trim();

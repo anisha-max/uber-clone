@@ -10,11 +10,11 @@ const SocketProvider = ({ children }) => {
   useEffect(() => {
 
     socket.on('connect', () => {
-      console.log('Connected to server:', socket.id)
+      console.error('Connected to server:', socket.id)
     })
 
     socket.on('disconnect', () => {
-      console.log('Disconnected from server')
+      console.error('Disconnected from server')
     })
 
     // socketRef.current.on('connect_error', (err) => {

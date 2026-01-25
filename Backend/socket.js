@@ -13,10 +13,10 @@ function intializeSocket(server) {
     })
 
     io.on('connection', (socket) => {
-        console.log(`Client connected: ${socket.id}`)
+        // console.log(`Client connected: ${socket.id}`)
         socket.on('join', async (data) => {
             const { userId, userType } = data
-            console.log(`user ${userId}joined as ${userType}`)
+            // console.log(`user ${userId}joined as ${userType}`)
             if (userType === 'user') {
                 await userModel.findByIdAndUpdate(userId, {
                     socketId: socket.id
@@ -53,7 +53,7 @@ function intializeSocket(server) {
                 })
 
                 socket.on('disconnect', () => {
-                    console.log(`Client disconnected: ${socket.id}`)
+                    // console.log(`Client disconnected: ${socket.id}`)
                 })
             }
         })
@@ -61,11 +61,11 @@ function intializeSocket(server) {
 }
 
 function sendMessageToSocketId(socketId, messageObject) {
-    console.log(`Sending message to ${socketId}` , messageObject)
+    // console.log(`Sending message to ${socketId}` , messageObject)
     if (io) {
         io.to(socketId).emit(messageObject.event, messageObject.data)
     } else {
-        console.log('Socket.io not intialized')
+        // console.log('Socket.io not intialized')
     }
 }
 
